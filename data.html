@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Topup</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="data.css" />
+  </head>
+  <body>
+    <header>
+      <i
+        class="fas fa-arrow-left"
+        onclick="window.location.href='home.html';"
+        style="
+          cursor: pointer;
+          position: absolute;
+          left: 20px;
+          top: 20px;
+          font-size: 1.5em;
+        "
+      ></i>
+      <h1>Buy Data</h1>
+    </header>
+
+    <div class="container">
+      <form>
+        <div class="form-group">
+          <label for="network">Select a Network</label>
+          <select id="network">
+            <option value="" disabled selected>Select Mobile Operator</option>
+            <option value="MTN">MTN</option>
+            <option value="AIRTEL">AIRTEL</option>
+            <option value="GLO">GLO</option>
+            <option value="9MOBILE">9 MOBILE</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data-plan">Select Data Plan</label>
+          <select id="data-plan">
+            <option value="" disabled selected>Select Data Plan</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <div class="phone-container">
+            <input type="text" id="phone" placeholder="Enter phone number" />
+            <img
+              src="https://cdn.iconscout.com/icon/free/png-512/free-phone-icon-download-in-svg-png-gif-file-formats--mobile-smartphone-telephone-user-interface-icons-set-pack-1617678.png?f=webp&w=512"
+              alt="Phone Icon"
+              id="select-contact"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input
+            type="text"
+            id="amount"
+            placeholder="Amount for selected plan"
+            disabled
+          />
+        </div>
+
+        <button type="button" id="buyData">Buy Data</button>
+      </form>
+    </div>
+
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-content">
+        <img
+          src="https://cdn.iconscout.com/icon/premium/png-512-thumb/warning-43-149965.png?f=webp&w=512"
+          alt="Warning"
+        />
+        <p>
+          Insufficient Balance to purchase data. Please deposit/fund your
+          account to continue.
+        </p>
+        <button id="closeSheet">❌ Close</button>
+      </div>
+    </div>
+
+    <script>
+      const dataPlans = {
+        MTN: [
+          { plan: "1GB", price: 250 },
+          { plan: "2GB", price: 500 },
+          { plan: "3GB", price: 750 },
+          { plan: "4GB", price: 1000 },
+          { plan: "5GB", price: 1250 },
+          { plan: "10GB", price: 2500 },
+        ],
+        AIRTEL: [
+          { plan: "1GB", price: 300 },
+          { plan: "2GB", price: 600 },
+          { plan: "3GB", price: 900 },
+          { plan: "4GB", price: 1200 },
+          { plan: "5GB", price: 1500 },
+          { plan: "10GB", price: 3000 },
+        ],
+        GLO: [
+          { plan: "200MB", price: 60 },
+          { plan: "1GB", price: 250 },
+          { plan: "2GB", price: 500 },
+          { plan: "3GB", price: 750 },
+          { plan: "4GB", price: 1000 },
+          { plan: "5GB", price: 1250 },
+          { plan: "10GB", price: 2500 },
+        ],
+        "9MOBILE": [
+          { plan: "1GB", price: 150 },
+          { plan: "2GB", price: 300 },
+          { plan: "4GB", price: 600 },
+          { plan: "5GB", price: 750 },
+          { plan: "6GB", price: 900 },
+          { plan: "10GB", price: 1800 },
+        ],
+      };
+
+      document
+        .getElementById("network")
+        .addEventListener("change", function () {
+          const network = this.value;
+          const dataPlanSelect = document.getElementById("data-plan");
+          dataPlanSelect.innerHTML =
+            '<option value="" disabled selected>Select Data Plan</option>';
+
+          if (network && dataPlans[network]) {
+            dataPlans[network].forEach((plan) => {
+              const option = document.createElement("option");
+              option.value = plan.price;
+              option.textContent = `${plan.plan} - ₦${plan.price}`;
+              dataPlanSelect.appendChild(option);
+            });
+          }
+        });
+
+      document
+        .getElementById("data-plan")
+        .addEventListener("change", function () {
+          const selectedAmount = this.value;
+          document.getElementById("amount").value = `₦${selectedAmount}`;
+        });
+
+      document.getElementById("buyData").addEventListener("click", () => {
+        // Display the bottom sheet
+        const bottomSheet = document.getElementById("bottomSheet");
+        bottomSheet.style.bottom = "0";
+      });
+
+      document.getElementById("closeSheet").addEventListener("click", () => {
+        // Hide the bottom sheet
+        const bottomSheet = document.getElementById("bottomSheet");
+        bottomSheet.style.bottom = "-100%";
+      });
+    </script>
+  </body>
+</html>

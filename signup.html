@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="signup.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="logo">Moniebase</div>
+      </div>
+    </header>
+    <img
+      src="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+      alt="Signup Image"
+      class="signup-image"
+    />
+    <div class="container">
+      <h1>Create Account Now!</h1>
+      <form id="signupForm">
+        <label for="full-name">Full Name</label>
+        <input
+          type="text"
+          id="full-name"
+          placeholder="Enter your full name"
+          required
+        />
+
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          required
+        />
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+          required
+        />
+
+        <label for="phone">Phone No</label>
+        <input
+          type="tel"
+          id="phone"
+          placeholder="Enter your phone number"
+          required
+        />
+
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+
+    <script>
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth(); // Added this line to initialize Firebase Authentication
+
+      // Function to display toast message
+      function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+          toast.remove();
+        }, 3000);
+      }
+
+      // Form Submission
+      document.getElementById("signupForm").addEventListener("submit", (e) => {
+        e.preventDefault(); // Prevent form from reloading the page
+
+        const fullName = document.getElementById("full-name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const phone = document.getElementById("phone").value;
+
+        // Sign up user with Firebase Authentication
+        auth
+          .createUserWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+
+            // Save user data to Firebase Realtime Database, including initial balance
+            const userRef = database.ref("users/" + user.uid);
+            userRef.set({
+              fullName: fullName,
+              email: email,
+              phone: phone,
+              balance: 0.0, // Initial balance
+            });
+
+            // Save user info in localStorage
+            localStorage.setItem(
+              "user",
+              JSON.stringify({
+                uid: user.uid,
+                fullName: fullName,
+                email: email,
+                phone: phone,
+                balance: 0.0, // Initial balance
+              })
+            );
+
+            // Show success toast message
+            showToast("Account Created Successfully on Moniebase");
+
+            // Redirect to login page after 3 seconds
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 3000);
+          })
+          .catch((error) => {
+            // Handle errors (e.g., email already in use)
+            const errorMessage = error.message;
+            showToast("Error: " + errorMessage);
+          });
+      });
+    </script>
+  </body>
+</html>

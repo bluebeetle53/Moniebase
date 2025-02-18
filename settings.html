@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings Page</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="settings.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+  </head>
+  <body>
+    <div class="settings">
+      <i class="fas fa-cogs"></i>
+      <span>Settings</span>
+    </div>
+
+    <div class="content">
+      <div class="blue-half"></div>
+      <div class="white-half">
+        <div class="container">
+          <i class="fas fa-user-circle profile-icon"></i>
+          <span id="username">Username</span>
+
+          <div class="linear-view" onclick="showDialog()">
+            <span class="account-limit">Account Limit</span>
+            <i class="fas fa-chevron-right"></i>
+          </div>
+
+          <div class="linear-view" onclick="window.location.href='chat.html';">
+            <span class="account-limit">Customer Care</span>
+            <i class="fas fa-chevron-right"></i>
+          </div>
+
+          <!-- Linear View for "View Wallet ID" -->
+          <div class="linear-view" onclick="showWalletDialog()">
+            <span class="account-limit">View Wallet ID</span>
+            <i class="fas fa-chevron-right"></i>
+          </div>
+
+          <div class="linear-view" onclick="showDialoge()">
+            <span class="account-limit">Delete Account</span>
+            <i class="fas fa-chevron-right"></i>
+        </div>
+        
+        </div>
+      </div>
+    </div>
+
+    <div id="dialog" class="dialog">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h3>Account Limit</h3>
+          <button class="close-btn" onclick="closeDialog()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="dialog-body">
+          <div class="dialog-item">
+            <i class="fas fa-hand-holding-usd icon"></i>
+            <span class="text"
+              >Daily Deposit Limit: <strong>NGN 200,000</strong></span
+            >
+          </div>
+          <div class="dialog-item">
+            <i class="fas fa-exchange-alt icon"></i>
+            <span class="text"
+              >Daily Transfer Limit: <strong>NGN 350,000</strong></span
+            >
+          </div>
+          <div class="dialog-item summary">
+            <i class="fas fa-wallet icon"></i>
+            <span class="text"
+              >Your account can hold up to <strong>NGN 500,000,000</strong> as
+              total balance</span
+            >
+          </div>
+        </div>
+
+        <div class="dialog-footer">
+          <button class="cancel-btn" onclick="closeDialog()">
+            <i class="fas fa-times-circle"></i> Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog for displaying phone number -->
+    <div id="wallet-dialog" class="dialog">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h3>Moniebase</h3>
+          <button class="close-btn" onclick="closeDialog()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="dialog-body">
+          <p id="phone-number">Loading...</p>
+        </div>
+      </div>
+    </div>
+
+
+
+    <a href="transfer.html">
+        <div class="bottom-nav">
+          <div class="nav-item">
+            <img
+              src="https://cdn.iconscout.com/icon/premium/png-512-thumb/send-1539226-1304320.png?f=webp&w=512"
+              alt="Transfer"
+            />
+            <span>Transfer</span>
+          </div>
+        </a>
+          <a href="airtime.html">
+            <div class="nav-item">
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-512/free-phone-icon-download-in-svg-png-gif-file-formats--call-logo-communication-contact-mobile-marketing-and-growth-pack-business-icons-2212486.png?f=webp&w=512"
+                alt="Airtime"
+              />
+              <span>Airtime</span>
+            </div>
+          </a>
+          <a href="data.html">
+            <div class="nav-item">
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-512/free-internet-icon-download-in-svg-png-gif-file-formats--connection-globe-website-computer-of-thing-pack-science-technology-icons-2378108.png?f=webp&w=512"
+                alt="Data"
+              />
+              <span>Data</span>
+            </div>
+          </a>
+          <a href="deposit.html">
+          <div class="nav-item">
+            <img
+              src="https://cdn.iconscout.com/icon/premium/png-512-thumb/deposit-6404441-5352409.png?f=webp&w=512"
+              alt="Deposit"
+            />
+            <span>Deposit</span>
+          </div>
+          </a>
+        </div>
+    
+
+    <script>
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // Function to display the username
+      function displayUsername() {
+        const user = auth.currentUser;
+
+        // If the user is authenticated, fetch their username from Firebase
+        if (user) {
+          const userRef = database.ref("users/" + user.uid);
+          userRef.once("value", (snapshot) => {
+            const userData = snapshot.val();
+            const username = userData ? userData.fullName : "Unknown User";
+
+            // Display the username in the HTML element with id="username"
+            document.getElementById("username").textContent = username;
+          });
+        } else {
+          // If no user is authenticated, check localStorage
+          const storedUser = JSON.parse(localStorage.getItem("user"));
+          if (storedUser && storedUser.fullName) {
+            document.getElementById("username").textContent =
+              storedUser.fullName;
+          } else {
+            document.getElementById("username").textContent = "Guest";
+          }
+        }
+      }
+
+      // Ensure Firebase Authentication is initialized and user state is updated
+      auth.onAuthStateChanged((user) => {
+        displayUsername(); // Call the function again after the auth state changes
+      });
+
+      // Call displayUsername on page load to handle initial user state
+      window.onload = displayUsername;
+    </script>
+
+    <script>
+      // Function to display dialog
+      function showDialog() {
+        document.getElementById("dialog").style.display = "flex";
+      }
+
+      // Function to display phone number in the wallet dialog
+      function showWalletDialog() {
+        const userEmail = auth.currentUser ? auth.currentUser.email : null; // Get the current logged-in user's email
+
+        if (userEmail) {
+          const userRef = database
+            .ref("users")
+            .orderByChild("email")
+            .equalTo(userEmail);
+
+          userRef
+            .once("value", (snapshot) => {
+              if (snapshot.exists()) {
+                const userData = snapshot.val();
+                const userPhone = Object.values(userData)[0].phone; // Get phone number of the first match
+                document.getElementById(
+                  "phone-number"
+                ).textContent = `Wallet ID: ${userPhone}`;
+                document.getElementById("wallet-dialog").style.display = "flex"; // Open the wallet dialog
+              } else {
+                document.getElementById("phone-number").textContent =
+                  "No user found.";
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching user data:", error);
+              document.getElementById("phone-number").textContent =
+                "Error fetching phone number.";
+            });
+        } else {
+          document.getElementById("phone-number").textContent =
+            "No user logged in.";
+        }
+      }
+
+      // Function to close the wallet dialog
+      function closeWalletDialog() {
+        document.getElementById("wallet-dialog").style.display = "none";
+      }
+
+      // Function to close the general dialog
+      function closeDialog() {
+        document.getElementById("dialog").style.display = "none";
+      }
+    </script>
+
+<script>
+    // Show confirmation dialog
+    function showDialoge() {
+      if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+        deleteUserAccount();
+      }
+    }
+  
+    // Function to delete user account
+    function deleteUserAccount() {
+      const user = auth.currentUser; // Get the current logged-in user
+  
+      if (user) {
+        // Delete user data from Firebase
+        const userRef = database.ref("users/" + user.uid);
+        
+        userRef.remove()  // Remove data from Firebase
+          .then(() => {
+            console.log("User data deleted from Moniebase.");
+            // Delete user from Firebase Authentication (delete the user account)
+            user.delete()
+              .then(() => {
+                console.log("User account deleted from Moniebase.");
+                // Remove user data from localStorage
+                localStorage.removeItem("user");
+  
+                // Redirect to login page
+                window.location.href = "login.html";
+              })
+              .catch((error) => {
+                console.error("Error deleting user account: ", error);
+                alert("Error deleting user account: " + error.message);
+              });
+          })
+          .catch((error) => {
+            console.error("Error deleting user data on Moniebase: ", error);
+            alert("Error deleting user data: " + error.message);
+          });
+      } else {
+        console.log("No user logged in.");
+        alert("You need to be logged in to delete your account.");
+      }
+    }
+  </script>
+  
+  </body>
+</html>
+

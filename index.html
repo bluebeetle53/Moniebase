@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Moniebase - Cheap Data and Airtime with Bank Transfers, No Charges
+    </title>
+
+    <!-- Meta Description -->
+    <meta
+      name="description"
+      content="Moniebase offers cheap data and airtime with bank transfers, no charges. Get the best deals on mobile top-ups and data bundles with seamless transactions."
+    />
+
+    <!-- Meta Tags for Social Media -->
+    <meta
+      property="og:title"
+      content="Moniebase - Cheap Data and Airtime with Bank Transfers, No Charges"
+    />
+    <meta
+      property="og:description"
+      content="Moniebase offers cheap data and airtime with bank transfers, no charges. Enjoy easy top-ups with zero fees."
+    />
+    <meta
+      property="og:image"
+      content="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+    />
+    <meta property="og:url" content="your-website-url-here" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Moniebase - Cheap Data and Airtime with Bank Transfers, No Charges"
+    />
+    <meta
+      name="twitter:description"
+      content="Get cheap data and airtime with bank transfers at Moniebase with no charges! Best deals for all your mobile needs."
+    />
+    <meta
+      name="twitter:image"
+      content="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+    />
+    <meta name="twitter:url" content="your-website-url-here" />
+
+    <!-- Favicon for all platforms -->
+    <link
+      rel="icon"
+      href="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+      type="image/png"
+    />
+
+    <!-- Additional SEO Tags -->
+    <meta name="robots" content="index, follow" />
+    <meta
+      name="keywords"
+      content="Moniebase, cheap data, airtime, bank transfers, no charges, mobile top-ups, data bundles, free bank transfers"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="logo">Moniebase</div>
+        <div class="drawer-icon" id="drawerIcon">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+    </header>
+
+    <div class="drawer" id="drawer">
+      <ul>
+        <li class="active" onclick="navigateTo('home')">Home</li>
+        <li onclick="navigateTo('login')">Login / Sign up</li>
+        <li onclick="navigateTo('contact')">Contact Us</li>
+      </ul>
+      <div class="drawer-footer">
+        <img
+          src="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+          alt="Moniebase Logo"
+          class="footer-logo"
+        />
+        <p class="footer-text">Moniebase</p>
+      </div>
+    </div>
+    <div class="image-container">
+      <img
+        src="https://static.wixstatic.com/media/08524f_6b653cc8a53a46298189f0e0f07512ca~mv2.png/v1/fill/w_900,h_521,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/Mask%20group(9)(1).png"
+        alt="Centered Image"
+      />
+    </div>
+    <div class="container">
+      <h1>Moniebase - The Best Platform for Online Payment In Nigeria</h1>
+      <div class="steps">
+        <p class="step">
+          Use Moniebase as your payment gateway in your platforms such as
+          eCommerce stores, websites, and businesses.
+        </p>
+        <p class="step">
+          Send and receive cash across Nigeria with ease and security.
+        </p>
+        <p class="step">
+          Send cash to your family, relatives, and loved ones anywhere in the
+          country.
+        </p>
+        <p class="step">
+          Get started by creating an account with your phone number and email
+          address only.
+        </p>
+        <p class="step">
+          Enjoy seamless banking, airtime top-ups, and other financial services
+          at your fingertips.
+        </p>
+      </div>
+    </div>
+    <script>
+      const drawerIcon = document.getElementById("drawerIcon");
+      const drawer = document.getElementById("drawer");
+
+      drawerIcon.addEventListener("click", () => {
+        if (drawer.style.right === "0px") {
+          drawer.style.right = "-250px";
+        } else {
+          drawer.style.right = "0px";
+        }
+      });
+
+      function navigateTo(page) {
+        if (page === "home") {
+          window.location.href = "index.html";
+        } else if (page === "login") {
+          window.location.href = "login.html";
+        } else if (page === "contact") {
+          window.location.href = "../app/chat.html";
+        }
+      }
+    </script>
+  </body>
+</html>

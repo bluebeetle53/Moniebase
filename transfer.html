@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bank Transfer</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 15px;
+        text-align: left;
+      }
+
+      header i {
+        font-size: 24px;
+        color: white;
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        cursor: pointer;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        padding: 0;
+        margin-left: 40px;
+      }
+
+      .container {
+        margin: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 93%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+      }
+
+      .form-group input:disabled {
+        background-color: #f5f5f5;
+      }
+
+      #proceedButton {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 90%;
+        margin: 0 auto;
+        display: block;
+      }
+
+      #proceedButton:hover {
+        background-color: #2f4f7f;
+      }
+
+      .bottom-sheet {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 20px;
+        text-align: center;
+        transition: bottom 0.3s ease;
+      }
+
+      .sheet-content img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .sheet-content p {
+        font-size: 16px;
+        margin: 20px 0;
+      }
+
+      #closeSheet {
+        background-color: #fff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #closeSheet:hover {
+        background-color: #2f4f7f;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <i
+        class="fas fa-arrow-left"
+        onclick="window.location.href='home.html';"
+      ></i>
+      <h1>Transfer Cash</h1>
+    </header>
+
+    <div class="container">
+      <form id="transferForm">
+        <div class="form-group">
+          <label for="accountNumber">Account Number</label>
+          <input
+            type="text"
+            id="accountNumber"
+            placeholder="Enter Account Number"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="bank">Select Bank</label>
+          <select id="bank">
+            <option value="" disabled selected>Select Bank</option>
+            <option value="044">Access Bank</option>
+            <option value="050">Ecobank</option>
+            <option value="058">GTBank</option>
+            <option value="011">First Bank</option>
+            <option value="032">Union Bank</option>
+            <option value="033">United Bank for Africa</option>
+            <option value="035">Wema Bank</option>
+            <option value="057">Zenith Bank</option>
+            <option value="044">Access Bank Plc</option>
+            <option value="063">Diamond Bank Plc</option>
+            <option value="050">Ecobank Nigeria Plc</option>
+            <option value="084">Enterprise Bank Plc</option>
+            <option value="070">Fidelity Bank Plc</option>
+            <option value="011">First Bank of Nigeria Plc</option>
+            <option value="214">First City Monument Bank Plc</option>
+            <option value="058">Guaranty Trust Bank Plc</option>
+            <option value="030">Heritage Banking Company Ltd</option>
+            <option value="301">Jaiz Bank Plc</option>
+            <option value="082">Keystone Bank Ltd</option>
+            <option value="014">Mainstreet Bank Plc</option>
+            <option value="076">Skye Bank Plc</option>
+            <option value="039">Stanbic IBTC Bank Plc</option>
+            <option value="232">Sterling Bank Plc</option>
+            <option value="032">Union Bank of Nigeria Plc</option>
+            <option value="033">United Bank for Africa Plc</option>
+            <option value="215">Unity Bank Plc</option>
+            <option value="035">Wema Bank Plc</option>
+            <option value="057">Zenith Bank Plc</option>
+            <option value="068">Standard Chartered Bank Nigeria Ltd</option>
+            <option value="502">Rand Merchant Bank</option>
+            <option value="526">Parallex Bank</option>
+            <option value="101">Providus Bank</option>
+            <option value="120">Globus Bank</option>
+            <option value="100">Titan Trust Bank</option>
+            <option value="023">CitiBank Nigeria</option>
+            <option value="526">Rubies Microfinance Bank</option>
+            <option value="999">Kuda Microfinance Bank</option>
+            <option value="101">Access Holdings Plc</option>
+            <option value="102">FBN Holdings Plc</option>
+            <option value="103">FCMB Group Plc</option>
+            <option value="104">Guaranty Trust Bank Plc</option>
+            <option value="105">First Bank of Nigeria Ltd</option>
+            <option value="106">Union Bank of Nigeria Plc</option>
+            <option value="107">Stanbic IBTC Holdings Plc</option>
+            <option value="108">Zenith Bank Plc</option>
+            <option value="109">Ecobank Nigeria Plc</option>
+            <option value="110">Standard Chartered Bank Nigeria Ltd</option>
+            <option value="111">Skye Bank Plc</option>
+            <option value="112">United Bank for Africa Plc</option>
+            <option value="113">Citibank Nigeria Ltd</option>
+            <option value="114">Diamond Bank Plc</option>
+            <option value="115">Sterling Bank Plc</option>
+            <option value="116">Wema Bank Plc</option>
+            <option value="117">Polaris Bank Ltd</option>
+            <option value="118">Kuda Bank</option>
+            <option value="119">Opay</option>
+            <option value="120">PalmPay</option>
+            <option value="121">Moniepoint</option>
+            <option value="122">Fidelity Bank Plc</option>
+            <option value="123">Jaiz Bank Plc</option>
+            <option value="124">VFD Microfinance Bank</option>
+            <option value="125">FSDH Merchant Bank</option>
+            <option value="126">Providus Bank</option>
+            <option value="127">SunTrust Bank Nigeria Ltd</option>
+            <option value="128">GTBank Microfinance Bank</option>
+            <option value="129">Kogi State Microfinance Bank</option>
+            <option value="130">
+              First City Monument Bank (FCMB) Microfinance
+            </option>
+            <option value="131">KeyStone Bank Ltd</option>
+            <option value="132">Aso Savings and Loans Plc</option>
+            <option value="133">Eko Bank</option>
+            <option value="134">Trust Microfinance Bank</option>
+            <option value="135">Innovative Microfinance Bank</option>
+            <option value="136">Allied Microfinance Bank</option>
+            <option value="137">Coronation Merchant Bank</option>
+            <option value="138">Mint Bank</option>
+            <option value="139">Baobab Microfinance Bank</option>
+            <option value="140">
+              Nigerian Agricultural Cooperative and Rural Development Bank
+              (NACRDB)
+            </option>
+            <option value="141">Bank of Industry (BOI)</option>
+            <option value="142">Lapo Microfinance Bank</option>
+            <option value="143">Airtel Mobile Banking</option>
+            <option value="144">Paga</option>
+            <option value="145">Zenith Bank Microfinance Bank</option>
+            <option value="146">AfriBank Nigeria Plc</option>
+            <option value="147">Mainstreet Bank Ltd</option>
+            <option value="148">MFB Lagos</option>
+            <option value="149">Brighter Microfinance Bank</option>
+            <option value="150">Access Bank Microfinance Bank</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="accountName">Account Name</label>
+          <input type="text" id="accountName" disabled />
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount (NGN)</label>
+          <input type="number" id="amount" placeholder="Enter Amount" />
+        </div>
+
+        <button type="button" id="proceedButton">Proceed</button>
+      </form>
+    </div>
+
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-content">
+        <img
+          src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
+          alt="Failed Icon"
+        />
+        <p id="confirmationMessage">
+          Your transfer to <span id="accountNameSpan"></span> failed due to
+          insufficient balance. Please fund/deposit and try again.
+        </p>
+        <button id="closeSheet">❌</button>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("proceedButton")
+        .addEventListener("click", async () => {
+          const accountNumber = document.getElementById("accountNumber").value;
+          const bankCode = document.getElementById("bank").value;
+
+          if (!accountNumber || !bankCode) {
+            alert("Please fill out all fields.");
+            return;
+          }
+
+          const resultDiv = document.getElementById("accountName");
+
+          // Monnify credentials
+          const apiKey = "MK_TEST_N5X910LS9V";
+          const secretKey = "LTF6KNFHFLQQL7XFB1L4HRUEAK4G0SGH";
+          const baseUrl = "https://sandbox.monnify.com";
+
+          // Encode API keys to Base64
+          const credentials = btoa(`${apiKey}:${secretKey}`);
+
+          try {
+            // Get authentication token
+            const authResponse = await fetch(`${baseUrl}/api/v1/auth/login`, {
+              method: "POST",
+              headers: {
+                Authorization: `Basic ${credentials}`,
+                "Content-Type": "application/json",
+              },
+            });
+
+            const authData = await authResponse.json();
+            const accessToken = authData.responseBody.accessToken;
+
+            // Fetch account name
+            const response = await fetch(
+              `${baseUrl}/api/v1/disbursements/account/validate?accountNumber=${accountNumber}&bankCode=${bankCode}`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            const data = await response.json();
+
+            if (data.responseBody && data.responseBody.accountName) {
+              resultDiv.value = data.responseBody.accountName;
+
+              // Display the bottom sheet with confirmation message
+              document.getElementById("confirmationMessage").innerHTML = `
+              Your transfer to ${data.responseBody.accountName} failed due to insufficient balance. Please fund/deposit and try again.`;
+              document.getElementById("bottomSheet").style.bottom = "0";
+            } else {
+              alert("Account verification failed.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while verifying the account.");
+          }
+        });
+
+      // Close the bottom sheet
+      document.getElementById("closeSheet").addEventListener("click", () => {
+        document.getElementById("bottomSheet").style.bottom = "-100%";
+      });
+    </script>
+  </body>
+</html>

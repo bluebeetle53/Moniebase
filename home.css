@@ -1,0 +1,231 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #ffff;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 10px 20px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-text {
+  font-size: 16px;
+  color: #333;
+}
+
+.right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.notification-icon {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 10px;
+  }
+
+  .profile-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .user-text {
+    font-size: 14px;
+  }
+
+  .notification-icon {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.card {
+  background: #2f4f7f;
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  color: white;
+  margin: 20px auto;
+}
+
+.total-balance {
+  margin-bottom: 10px;
+}
+
+.total-balance span {
+  font-size: 18px;
+}
+
+.balance {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.balance span {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.chip {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 10px;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  margin: 15px 0;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.option img {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.option span {
+  font-size: 14px;
+  color: white;
+}
+
+#recent-transactions {
+  width: 90%;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: #ffff;
+  border-radius: 8px;
+  text-align: center;
+  background-color: #ffff;
+}
+
+#recent-transactions h2 {
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+#recent-transactions img {
+  display: block;
+  margin: 0 auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+#recent-transactions p {
+  font-size: 16px;
+  color: #666;
+  margin-top: 10px;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.nav-item {
+  text-align: center;
+  padding: 5px 10px;
+}
+
+.nav-item img {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.nav-item span {
+  font-size: 14px;
+  color: #555;
+}
+
+.nav-item:hover {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.nav-item:hover span {
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+}

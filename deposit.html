@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual Account</title>
+    <style>
+      /* styles.css */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: hidden;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: #2f4f7f;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      header .back-arrow {
+        font-size: 24px;
+        margin-right: 8px;
+        cursor: pointer;
+        color: #ffffff;
+      }
+
+      header h1 {
+        font-size: 20px;
+        margin: 0;
+        font-weight: bold;
+        color: #ffffff;
+      }
+
+      .alert {
+        display: flex;
+        align-items: center;
+        background-color: #e3f2fd;
+        padding: 12px 16px;
+        border-radius: 4px;
+        margin: 16px;
+      }
+
+      .alert .bell-icon {
+        font-size: 18px;
+        margin-right: 8px;
+      }
+
+      .alert p {
+        font-size: 14px;
+        margin: 0;
+        color: #1565c0;
+      }
+
+      .account-list {
+        padding: 0 16px 16px;
+      }
+
+      .account-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 12px;
+        margin-bottom: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+      }
+
+      .bank-details {
+        max-width: 60%;
+      }
+
+      .bank-name {
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0 0 4px;
+      }
+
+      .account-name {
+        font-size: 12px;
+        color: #757575;
+        margin: 0;
+      }
+
+      .account-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .account-number {
+        font-size: 14px;
+        margin-right: 8px;
+      }
+
+      .copy-btn {
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background: none;
+        color: #1565c0;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <span class="back-arrow"
+          ><i
+            class="fas fa-arrow-left"
+            onclick="window.location.href='home.html';"
+          ></i
+        ></span>
+        <h1>Deposit/Fund your wallet</h1>
+      </header>
+
+      <div class="alert">
+        <span class="bell-icon"><i class="fas fa-bell"></i></span>
+        <p>
+          Transfer to any of the account numbers below to fund your wallet
+          Minimum of ₦1,000 funding below might take longer to reflect
+        </p>
+      </div>
+
+      <div class="account-list">
+        <div class="account-item">
+          <div class="bank-details">
+            <p class="bank-name">Moniepoint Microfinance Bank</p>
+            <p class="account-name">Account Verified</p>
+          </div>
+          <div class="account-info">
+            <p class="account-number">8100921760</p>
+            <button class="copy-btn" onclick="copyToClipboard('8100921760')">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="account-item">
+          <div class="bank-details">
+            <p class="bank-name">Palmpay</p>
+            <p class="account-name">Account Verified</p>
+          </div>
+          <div class="account-info">
+            <p class="account-number">6602270948</p>
+            <button class="copy-btn" onclick="copyToClipboard('6602270948')">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="account-item">
+          <div class="bank-details">
+            <p class="bank-name">Palmpay</p>
+            <p class="account-name">Account Verified</p>
+          </div>
+          <div class="account-info">
+            <p class="account-number">8100921760</p>
+            <button class="copy-btn" onclick="copyToClipboard('8100921760')">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="account-item">
+          <div class="bank-details">
+            <p class="bank-name">Wema Bank</p>
+            <p class="account-name">Account Verified</p>
+          </div>
+          <div class="account-info">
+            <p class="account-number">9784234571</p>
+            <button class="copy-btn" onclick="copyToClipboard('9784234571')">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="account-item">
+          <div class="bank-details">
+            <p class="bank-name">Opay</p>
+            <p class="account-name">Account Verified</p>
+          </div>
+          <div class="account-info">
+            <p class="account-number">8128885606</p>
+            <button class="copy-btn" onclick="copyToClipboard('8128885606')">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="account-item">
+          <div class="bank-details">
+            <p class="bank-name">Palmpay</p>
+            <p class="account-name">Account Verified</p>
+          </div>
+          <div class="account-info">
+            <p class="account-number">8128885606</p>
+            <button class="copy-btn" onclick="copyToClipboard('8128885606')">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="account-item">
+          <div class="bank-details">
+            <p class="bank-name">Palmpay</p>
+            <p class="account-name">Account Verified</p>
+          </div>
+          <div class="account-info">
+            <p class="account-number">6668692298</p>
+            <button class="copy-btn" onclick="copyToClipboard('6668692298')">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert">
+        <span class="bell-icon"><i class="fas fa-bell"></i></span>
+        <p>
+          Use your registered phone number as the narration , remark , notes or
+          reference if deposit hasnt arrived contact customer care
+        </p>
+      </div>
+    </div>
+    <script>
+      function copyToClipboard(accountNumber) {
+        navigator.clipboard.writeText(accountNumber).then(() => {
+          alert("Account number copied to clipboard: " + accountNumber);
+        });
+      }
+    </script>
+  </body>
+</html>
