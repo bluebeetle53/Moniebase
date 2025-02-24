@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transaction History</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      header {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      header i {
+        font-size: 24px;
+        color: white;
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        cursor: pointer;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        padding: 0;
+        margin-left: 40px;
+      }
+
+      .container {
+        margin: 20px;
+        padding-bottom: 70px;
+      }
+
+      .filter-controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        align-items: center;
+      }
+
+      .filter-button {
+        background-color: white;
+        border: 1px solid #ddd;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .filter-button.active {
+        background-color: #2f4f7f;
+        color: white;
+        border-color: #2f4f7f;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        border-radius: 5px;
+        padding: 5px 10px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+      }
+
+      .search-box i {
+        color: #888;
+        margin-right: 5px;
+      }
+
+      .search-box input {
+        border: none;
+        flex-grow: 1;
+        padding: 8px 5px;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .transaction {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        position: relative;
+        transition: transform 0.2s;
+      }
+
+      .transaction:active {
+        transform: scale(0.98);
+      }
+
+      .transaction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .transaction-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #f0f6ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+      }
+
+      .transaction-icon i {
+        color: #2f4f7f;
+        font-size: 18px;
+      }
+
+      .transaction-info {
+        flex-grow: 1;
+      }
+
+      .transaction-amount {
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .credit {
+        color: #28a745;
+      }
+
+      .debit {
+        color: #dc3545;
+      }
+
+      .transaction-details {
+        display: flex;
+        align-items: center;
+      }
+
+      .transaction p {
+        margin: 5px 0;
+        font-size: 14px;
+      }
+
+      .transaction .date {
+        color: #888;
+        font-size: 12px;
+      }
+
+      .transaction .status {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .status-success {
+        background-color: #e6f7ee;
+        color: #28a745;
+      }
+
+      .status-pending {
+        background-color: #fff8e6;
+        color: #ffc107;
+      }
+
+      .status-failed {
+        background-color: #feebeb;
+        color: #dc3545;
+      }
+
+      .transaction-id {
+        color: #666;
+        font-size: 11px;
+      }
+
+      .no-transactions {
+        text-align: center;
+        padding: 40px 0;
+        color: #888;
+      }
+
+      .no-transactions i {
+        font-size: 50px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .loader {
+        display: flex;
+        justify-content: center;
+        padding: 30px 0;
+      }
+
+      .loader-circle {
+        width: 30px;
+        height: 30px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #2f4f7f;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .date-header {
+        font-size: 13px;
+        font-weight: bold;
+        color: #666;
+        margin: 20px 0 10px 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .pagination-button {
+        background-color: white;
+        border: 1px solid #ddd;
+        padding: 8px 15px;
+        margin: 0 5px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .pagination-button.active {
+        background-color: #2f4f7f;
+        color: white;
+        border-color: #2f4f7f;
+      }
+
+      .pagination-button:disabled {
+        background-color: #f5f5f5;
+        color: #aaa;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <i
+        class="fas fa-arrow-left"
+        onclick="window.location.href='home.html';"
+      ></i>
+      <h1>Transaction History</h1>
+    </header>
+
+    <div class="container">
+      <div class="filter-controls">
+        <div>
+          <button class="filter-button active" data-filter="all">All</button>
+          <button class="filter-button" data-filter="transfer">
+            Transfers
+          </button>
+          <button class="filter-button" data-filter="deposit">Deposits</button>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search transactions..."
+        />
+      </div>
+
+      <div id="loader" class="loader">
+        <div class="loader-circle"></div>
+      </div>
+
+      <div id="transactionContainer">
+        <!-- Transactions will be dynamically inserted here -->
+      </div>
+
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be dynamically inserted here -->
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+    <script>
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // State variables
+      let allTransactions = [];
+      let filteredTransactions = [];
+      let currentFilter = "all";
+      let currentPage = 1;
+      const transactionsPerPage = 10;
+
+      // Format currency
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 2,
+        }).format(amount);
+      }
+
+      // Format date for grouping
+      function formatDateForGrouping(dateString) {
+        const date = new Date(dateString);
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        if (date.toDateString() === today.toDateString()) {
+          return "Today";
+        } else if (date.toDateString() === yesterday.toDateString()) {
+          return "Yesterday";
+        } else {
+          return date.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          });
+        }
+      }
+
+      // Get transaction icon based on type
+      function getTransactionIcon(type) {
+        switch (type) {
+          case "transfer":
+            return '<i class="fas fa-paper-plane"></i>';
+          case "deposit":
+            return '<i class="fas fa-download"></i>';
+          case "withdrawal":
+            return '<i class="fas fa-upload"></i>';
+          default:
+            return '<i class="fas fa-exchange-alt"></i>';
+        }
+      }
+
+      // Get transaction status class
+      function getStatusClass(status) {
+        switch (status) {
+          case "success":
+            return "status-success";
+          case "pending":
+            return "status-pending";
+          case "failed":
+            return "status-failed";
+          default:
+            return "status-success";
+        }
+      }
+
+      // Get transaction title
+      function getTransactionTitle(transaction) {
+        if (transaction.type === "transfer") {
+          return `Transfer to ${
+            transaction.recipient?.accountName || "Unknown"
+          }`;
+        } else if (transaction.type === "deposit") {
+          return `Deposit from ${transaction.sender?.name || "Unknown"}`;
+        } else if (transaction.type === "withdrawal") {
+          return `Withdrawal`;
+        }
+        return "Transaction";
+      }
+
+      // Apply filters and search
+      function applyFiltersAndSearch() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+
+        filteredTransactions = allTransactions.filter((transaction) => {
+          // Apply type filter
+          const matchesType =
+            currentFilter === "all" || transaction.type === currentFilter;
+
+          // Apply search filter
+          const searchableContent = [
+            transaction.recipient?.accountName || "",
+            transaction.recipient?.accountNumber || "",
+            transaction.transactionId || "",
+            transaction.narration || "",
+            transaction.recipient?.bankName || "",
+            transaction.sender?.name || "",
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          const matchesSearch =
+            searchTerm === "" || searchableContent.includes(searchTerm);
+
+          return matchesType && matchesSearch;
+        });
+
+        renderTransactions();
+      }
+
+      // Render transactions with pagination
+      function renderTransactions() {
+        const container = document.getElementById("transactionContainer");
+        container.innerHTML = "";
+
+        // Hide loader
+        document.getElementById("loader").style.display = "none";
+
+        if (filteredTransactions.length === 0) {
+          container.innerHTML = `
+            <div class="no-transactions">
+              <i class="fas fa-receipt"></i>
+              <p>No transactions found</p>
+            </div>
+          `;
+          document.getElementById("pagination").style.display = "none";
+          return;
+        }
+
+        // Calculate pagination
+        const totalPages = Math.ceil(
+          filteredTransactions.length / transactionsPerPage
+        );
+        if (currentPage > totalPages) {
+          currentPage = 1;
+        }
+
+        const start = (currentPage - 1) * transactionsPerPage;
+        const end = Math.min(
+          start + transactionsPerPage,
+          filteredTransactions.length
+        );
+        const paginatedTransactions = filteredTransactions.slice(start, end);
+
+        // Group transactions by date
+        const groupedTransactions = {};
+        paginatedTransactions.forEach((transaction) => {
+          const dateGroup = formatDateForGrouping(transaction.formattedDate);
+          if (!groupedTransactions[dateGroup]) {
+            groupedTransactions[dateGroup] = [];
+          }
+          groupedTransactions[dateGroup].push(transaction);
+        });
+
+        // Render grouped transactions
+        Object.keys(groupedTransactions).forEach((dateGroup) => {
+          const dateHeader = document.createElement("div");
+          dateHeader.className = "date-header";
+          dateHeader.textContent = dateGroup;
+          container.appendChild(dateHeader);
+
+          groupedTransactions[dateGroup].forEach((transaction) => {
+            const transactionDiv = document.createElement("div");
+            transactionDiv.className = "transaction";
+            transactionDiv.setAttribute("data-id", transaction.transactionId);
+
+            const amountClass =
+              transaction.type === "deposit" ? "credit" : "debit";
+            const amountPrefix = transaction.type === "deposit" ? "+" : "-";
+
+            transactionDiv.innerHTML = `
+              <div class="transaction-header">
+                <div class="transaction-details">
+                  <div class="transaction-icon">
+                    ${getTransactionIcon(transaction.type)}
+                  </div>
+                  <div class="transaction-info">
+                    <p><strong>${getTransactionTitle(transaction)}</strong></p>
+                    <p class="date">${new Date(
+                      transaction.formattedDate
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}</p>
+                    <p class="transaction-id">ID: ${
+                      transaction.transactionId
+                    }</p>
+                  </div>
+                </div>
+                <div>
+                  <p class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(
+              transaction.amount
+            )}</p>
+                  <span class="status ${getStatusClass(transaction.status)}">${
+              transaction.status
+            }</span>
+                </div>
+              </div>
+              ${
+                transaction.narration
+                  ? `<p class="narration">${transaction.narration}</p>`
+                  : ""
+              }
+            `;
+
+            container.appendChild(transactionDiv);
+
+            // Add click event to show transaction details
+            transactionDiv.addEventListener("click", () => {
+              // Here you would navigate to transaction details page
+              // window.location.href = `transaction-details.html?id=${transaction.transactionId}`;
+              alert(`Transaction details for ${transaction.transactionId}`);
+            });
+          });
+        });
+
+        // Render pagination
+        renderPagination(totalPages);
+      }
+
+      // Render pagination controls
+      function renderPagination(totalPages) {
+        const paginationDiv = document.getElementById("pagination");
+        paginationDiv.innerHTML = "";
+        paginationDiv.style.display = totalPages > 1 ? "flex" : "none";
+
+        if (totalPages <= 1) return;
+
+        // Previous button
+        const prevButton = document.createElement("button");
+        prevButton.className = "pagination-button";
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderTransactions();
+          }
+        });
+        paginationDiv.appendChild(prevButton);
+
+        // Page numbers
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+
+        if (endPage - startPage < 4) {
+          startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          const pageButton = document.createElement("button");
+          pageButton.className = `pagination-button ${
+            i === currentPage ? "active" : ""
+          }`;
+          pageButton.textContent = i;
+          pageButton.addEventListener("click", () => {
+            currentPage = i;
+            renderTransactions();
+          });
+          paginationDiv.appendChild(pageButton);
+        }
+
+        // Next button
+        const nextButton = document.createElement("button");
+        nextButton.className = "pagination-button";
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener("click", () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderTransactions();
+          }
+        });
+        paginationDiv.appendChild(nextButton);
+      }
+
+      // Set up filter buttons
+      document.querySelectorAll(".filter-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".filter-button").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+          button.classList.add("active");
+          currentFilter = button.getAttribute("data-filter");
+          currentPage = 1;
+          applyFiltersAndSearch();
+        });
+      });
+
+      // Set up search input
+      document.getElementById("searchInput").addEventListener("input", () => {
+        currentPage = 1;
+        applyFiltersAndSearch();
+      });
+
+      // Fetch and display transactions
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // Show loader
+          document.getElementById("loader").style.display = "flex";
+
+          const userTransactionsRef = database.ref(
+            `users/${user.uid}/transactions`
+          );
+          userTransactionsRef.on(
+            "value",
+            (snapshot) => {
+              allTransactions = [];
+              const transactions = snapshot.val();
+
+              if (transactions) {
+                // Convert to array and sort by timestamp (newest first)
+                allTransactions = Object.values(transactions).sort((a, b) => {
+                  return (b.timestamp || 0) - (a.timestamp || 0);
+                });
+              }
+
+              currentPage = 1;
+              applyFiltersAndSearch();
+            },
+            (error) => {
+              console.error("Error fetching transactions:", error);
+              document.getElementById("loader").style.display = "none";
+              document.getElementById("transactionContainer").innerHTML = `
+              <div class="no-transactions">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error loading transactions. Please try again later.</p>
+              </div>
+            `;
+            }
+          );
+        } else {
+          // Redirect to login if not logged in
+          window.location.href = "login.html";
+        }
+      });
+    </script>
+  </body>
+</html>
