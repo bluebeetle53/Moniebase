@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="home.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
@@ -19,7 +20,7 @@
         />
         <span class="user-text">Hello <span id="user-phone">081234567890</span></span>
       </div>
-</a>
+      </a>
       <div class="right">
         <a href="chat.html">
         <button class="notification-btn">
@@ -83,13 +84,23 @@
       </div>
     </div>
 
-    <div id="recent-transactions">
-      <h2>Recent Transactions</h2>
-      <img
-        src="https://cdn.iconscout.com/icon/premium/png-512-thumb/no-coin-icon-download-in-svg-png-gif-file-formats--forbidden-denied-penny-blocked-payment-and-finance-pack-business-icons-10466388.png?f=webp&w=512"
-        alt="Not Found"
-      />
-      <p>No Transaction Found</p>
+    <div class="transaction-history-container">
+      <div class="history-header">
+        <h2>Recent Transactions</h2>
+        <a href="history.html" class="see-more">See More</a>
+      </div>
+      
+      <div id="transaction-list">
+        <!-- Transactions will be loaded here -->
+      </div>
+      
+      <div id="no-transactions" style="display: none;">
+        <img
+          src="https://cdn.iconscout.com/icon/premium/png-512-thumb/no-coin-icon-download-in-svg-png-gif-file-formats--forbidden-denied-penny-blocked-payment-and-finance-pack-business-icons-10466388.png?f=webp&w=512"
+          alt="Not Found"
+        />
+        <p>No Transaction Found</p>
+      </div>
     </div>
 
     <a href="transfer.html">
@@ -161,6 +172,57 @@
         }, 3000);
       }
 
+      // Format currency
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 2,
+        }).format(amount);
+      }
+
+      // Get transaction icon based on type
+      function getTransactionIcon(type) {
+        switch (type) {
+          case "transfer":
+            return '<i class="fas fa-paper-plane"></i>';
+          case "deposit":
+            return '<i class="fas fa-download"></i>';
+          case "withdrawal":
+            return '<i class="fas fa-upload"></i>';
+          default:
+            return '<i class="fas fa-exchange-alt"></i>';
+        }
+      }
+
+      // Get transaction status class
+      function getStatusClass(status) {
+        switch (status) {
+          case "success":
+            return "status-success";
+          case "pending":
+            return "status-pending";
+          case "failed":
+            return "status-failed";
+          default:
+            return "status-success";
+        }
+      }
+
+      // Get transaction title
+      function getTransactionTitle(transaction) {
+        if (transaction.type === "transfer") {
+          return `Transfer to ${
+            transaction.recipient?.accountName || "Unknown"
+          }`;
+        } else if (transaction.type === "deposit") {
+          return `Deposit from ${transaction.sender?.name || "Unknown"}`;
+        } else if (transaction.type === "withdrawal") {
+          return `Withdrawal`;
+        }
+        return "Transaction";
+      }
+
       // Function to retrieve user data from Firebase and display it
       function displayUserData(user) {
         const userRef = database.ref("users/" + user.uid);
@@ -178,6 +240,68 @@
         }).catch((error) => {
           console.error("Error fetching user data:", error);
           showToast("Error fetching user data.");
+        });
+        
+        // Fetch and display recent transactions
+        const userTransactionsRef = database.ref(`users/${user.uid}/transactions`);
+        userTransactionsRef.limitToLast(3).on("value", (snapshot) => {
+          const transactionList = document.getElementById("transaction-list");
+          const noTransactions = document.getElementById("no-transactions");
+          
+          transactionList.innerHTML = "";
+          
+          const transactions = snapshot.val();
+          if (transactions) {
+            // Convert to array and sort by timestamp (newest first)
+            const transactionsArray = Object.values(transactions).sort((a, b) => {
+              return (b.timestamp || 0) - (a.timestamp || 0);
+            });
+            
+            noTransactions.style.display = "none";
+            transactionList.style.display = "block";
+            
+            // Display only the last 3 transactions
+            transactionsArray.slice(0, 3).forEach(transaction => {
+              const transactionDiv = document.createElement("div");
+              transactionDiv.className = "transaction";
+              transactionDiv.setAttribute("data-id", transaction.transactionId);
+              
+              const amountClass = transaction.type === "deposit" ? "credit" : "debit";
+              const amountPrefix = transaction.type === "deposit" ? "+" : "-";
+              
+              transactionDiv.innerHTML = `
+                <div class="transaction-header">
+                  <div class="transaction-details">
+                    <div class="transaction-icon">
+                      ${getTransactionIcon(transaction.type)}
+                    </div>
+                    <div class="transaction-info">
+                      <p><strong>${getTransactionTitle(transaction)}</strong></p>
+                      <p class="date">${new Date(transaction.timestamp).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(transaction.amount)}</p>
+                    <span class="status ${getStatusClass(transaction.status)}">${transaction.status}</span>
+                  </div>
+                </div>
+              `;
+              
+              transactionList.appendChild(transactionDiv);
+              
+              // Add click event to show transaction details
+              transactionDiv.addEventListener("click", () => {
+                // Redirect to transaction details
+                window.location.href = `history.html`;
+              });
+            });
+          } else {
+            transactionList.style.display = "none";
+            noTransactions.style.display = "flex";
+          }
+        }, (error) => {
+          console.error("Error fetching transactions:", error);
+          showToast("Error loading transactions.");
         });
       }
 
@@ -202,7 +326,7 @@
         
         function resetInactivityTimer() {
             clearTimeout(inactivityTimeout);
-            inactivityTimeout = setTimeout(redirectToLogin, 8000);
+            inactivityTimeout = setTimeout(redirectToLogin, 20000);
         }
 
         document.addEventListener("mousemove", resetInactivityTimer);
