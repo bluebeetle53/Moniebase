@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="home.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
@@ -12,24 +15,26 @@
   <body>
     <header class="header">
       <a href="settings.html">
-      <div class="left">
-        <img
-          src="https://cdn-icons-png.flaticon.com/128/18827/18827853.png"
-          alt="Profile Icon"
-          class="profile-icon"
-        />
-        <span class="user-text">Hello <span id="user-phone">081234567890</span></span>
-      </div>
+        <div class="left">
+          <img
+            src="https://cdn-icons-png.flaticon.com/128/18827/18827853.png"
+            alt="Profile Icon"
+            class="profile-icon"
+          />
+          <span class="user-text"
+            >Hello <span id="user-phone">081234567890</span></span
+          >
+        </div>
       </a>
       <div class="right">
         <a href="chat.html">
-        <button class="notification-btn">
-          <img
-            src="https://cdn.iconscout.com/icon/free/png-512/free-whatsapp-logo-icon-download-in-svg-png-gif-file-formats--social-media-logos-pack-icons-189793.png?f=webp&w=512"
-            alt="whatsapp Icon"
-            class="notification-icon"
-          />
-        </button>
+          <button class="notification-btn">
+            <img
+              src="https://cdn.iconscout.com/icon/free/png-512/free-whatsapp-logo-icon-download-in-svg-png-gif-file-formats--social-media-logos-pack-icons-189793.png?f=webp&w=512"
+              alt="WhatsApp Icon"
+              class="notification-icon"
+            />
+          </button>
         </a>
       </div>
     </header>
@@ -49,7 +54,7 @@
           <div class="option">
             <img
               src="https://cdn.iconscout.com/icon/premium/png-512-thumb/send-1539226-1304320.png?f=webp&w=512"
-              alt="Withdraw"
+              alt="Transfer"
             />
             <span>Transfer</span>
           </div>
@@ -73,13 +78,13 @@
           </div>
         </a>
         <a href="deposit.html">
-        <div class="option">
-          <img
-            src="https://cdn.iconscout.com/icon/premium/png-512-thumb/deposit-6404441-5352409.png?f=webp&w=512"
-            alt="deposit"
-          />
-          <span>Deposit</span>
-        </div>
+          <div class="option">
+            <img
+              src="https://cdn.iconscout.com/icon/premium/png-512-thumb/deposit-6404441-5352409.png?f=webp&w=512"
+              alt="Deposit"
+            />
+            <span>Deposit</span>
+          </div>
         </a>
       </div>
     </div>
@@ -89,12 +94,12 @@
         <h2>Recent Transactions</h2>
         <a href="history.html" class="see-more">See More</a>
       </div>
-      
+
       <div id="transaction-list">
         <!-- Transactions will be loaded here -->
       </div>
-      
-      <div id="no-transactions" style="display: none;">
+
+      <div id="no-transactions" style="display: none">
         <img
           src="https://cdn.iconscout.com/icon/premium/png-512-thumb/no-coin-icon-download-in-svg-png-gif-file-formats--forbidden-denied-penny-blocked-payment-and-finance-pack-business-icons-10466388.png?f=webp&w=512"
           alt="Not Found"
@@ -103,16 +108,16 @@
       </div>
     </div>
 
-    <a href="transfer.html">
     <div class="bottom-nav">
-      <div class="nav-item">
-        <img
-          src="https://cdn.iconscout.com/icon/premium/png-512-thumb/send-1539226-1304320.png?f=webp&w=512"
-          alt="Transfer"
-        />
-        <span>Transfer</span>
-      </div>
-    </a>
+      <a href="transfer.html">
+        <div class="nav-item">
+          <img
+            src="https://cdn.iconscout.com/icon/premium/png-512-thumb/send-1539226-1304320.png?f=webp&w=512"
+            alt="Transfer"
+          />
+          <span>Transfer</span>
+        </div>
+      </a>
       <a href="airtime.html">
         <div class="nav-item">
           <img
@@ -131,16 +136,46 @@
           <span>Data</span>
         </div>
       </a>
-      <a href="settings.html">
-      <div class="nav-item">
-        <img
-          src="https://cdn.iconscout.com/icon/premium/png-512-thumb/option-2160857-1843817.png?f=webp&w=512"
-          alt="more"
-        />
-        <span>More</span>
-      </div>
+      <a href="javascript:void(0);" id="more-btn">
+        <div class="nav-item">
+          <img
+            src="https://cdn.iconscout.com/icon/premium/png-512-thumb/option-2160857-1843817.png?f=webp&w=512"
+            alt="More"
+          />
+          <span>More</span>
+        </div>
       </a>
     </div>
+
+    <!-- Overlay for dialog -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Dialog Box -->
+    <div id="dialog" class="dialog">
+      <div class="dialog-header">
+        <div class="dialog-title">Services</div>
+        <span id="close-btn" class="close-btn">
+          <i class="fas fa-times"></i>
+        </span>
+      </div>
+      <div class="dialog-content">
+        <div class="service-item" id="settings">
+          <i class="fas fa-cogs"></i>
+          <span>Settings</span>
+        </div>
+        <div class="service-item" id="buy-electricity">
+          <i class="fas fa-bolt"></i>
+          <span>Electricity</span>
+        </div>
+        <div class="service-item" id="withdraw">
+          <i class="fas fa-wallet"></i>
+          <span>Withdraw</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Coming Soon!</div>
 
     <script>
       // Firebase Configuration
@@ -161,14 +196,13 @@
 
       // Function to display toast message
       function showToast(message) {
-        const toast = document.createElement("div");
-        toast.className = "toast";
+        const toast = document.getElementById("toast");
         toast.textContent = message;
-        document.body.appendChild(toast);
+        toast.classList.add("show");
 
         // Remove toast after 3 seconds
         setTimeout(() => {
-          toast.remove();
+          toast.classList.remove("show");
         }, 3000);
       }
 
@@ -227,82 +261,106 @@
       function displayUserData(user) {
         const userRef = database.ref("users/" + user.uid);
 
-        userRef.once("value", (snapshot) => {
-          const userData = snapshot.val();
-          
-          if (userData) {
-            // Display the balance and phone number
-            document.getElementById("amount").textContent = "" + userData.balance.toFixed(2); // Show balance
-            document.getElementById("user-phone").textContent = userData.phone || "No phone number"; // Show phone number
-          } else {
-            showToast("User data not found in Moniebase.");
-          }
-        }).catch((error) => {
-          console.error("Error fetching user data:", error);
-          showToast("Error fetching user data.");
-        });
-        
+        userRef
+          .once("value", (snapshot) => {
+            const userData = snapshot.val();
+
+            if (userData) {
+              // Display the balance and phone number
+              document.getElementById("amount").textContent =
+                userData.balance.toFixed(2); // Show balance
+              document.getElementById("user-phone").textContent =
+                userData.phone || "No phone number"; // Show phone number
+            } else {
+              showToast("User data not found in Moniebase.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching user data:", error);
+            showToast("Error fetching user data.");
+          });
+
         // Fetch and display recent transactions
-        const userTransactionsRef = database.ref(`users/${user.uid}/transactions`);
-        userTransactionsRef.limitToLast(3).on("value", (snapshot) => {
-          const transactionList = document.getElementById("transaction-list");
-          const noTransactions = document.getElementById("no-transactions");
-          
-          transactionList.innerHTML = "";
-          
-          const transactions = snapshot.val();
-          if (transactions) {
-            // Convert to array and sort by timestamp (newest first)
-            const transactionsArray = Object.values(transactions).sort((a, b) => {
-              return (b.timestamp || 0) - (a.timestamp || 0);
-            });
-            
-            noTransactions.style.display = "none";
-            transactionList.style.display = "block";
-            
-            // Display only the last 3 transactions
-            transactionsArray.slice(0, 3).forEach(transaction => {
-              const transactionDiv = document.createElement("div");
-              transactionDiv.className = "transaction";
-              transactionDiv.setAttribute("data-id", transaction.transactionId);
-              
-              const amountClass = transaction.type === "deposit" ? "credit" : "debit";
-              const amountPrefix = transaction.type === "deposit" ? "+" : "-";
-              
-              transactionDiv.innerHTML = `
+        const userTransactionsRef = database.ref(
+          `users/${user.uid}/transactions`
+        );
+        userTransactionsRef.limitToLast(3).on(
+          "value",
+          (snapshot) => {
+            const transactionList = document.getElementById("transaction-list");
+            const noTransactions = document.getElementById("no-transactions");
+
+            transactionList.innerHTML = "";
+
+            const transactions = snapshot.val();
+            if (transactions) {
+              // Convert to array and sort by timestamp (newest first)
+              const transactionsArray = Object.values(transactions).sort(
+                (a, b) => {
+                  return (b.timestamp || 0) - (a.timestamp || 0);
+                }
+              );
+
+              noTransactions.style.display = "none";
+              transactionList.style.display = "block";
+
+              // Display only the last 3 transactions
+              transactionsArray.slice(0, 3).forEach((transaction) => {
+                const transactionDiv = document.createElement("div");
+                transactionDiv.className = "transaction";
+                transactionDiv.setAttribute(
+                  "data-id",
+                  transaction.transactionId
+                );
+
+                const amountClass =
+                  transaction.type === "deposit" ? "credit" : "debit";
+                const amountPrefix = transaction.type === "deposit" ? "+" : "-";
+
+                transactionDiv.innerHTML = `
                 <div class="transaction-header">
                   <div class="transaction-details">
                     <div class="transaction-icon">
                       ${getTransactionIcon(transaction.type)}
                     </div>
                     <div class="transaction-info">
-                      <p><strong>${getTransactionTitle(transaction)}</strong></p>
-                      <p class="date">${new Date(transaction.timestamp).toLocaleDateString()}</p>
+                      <p><strong>${getTransactionTitle(
+                        transaction
+                      )}</strong></p>
+                      <p class="date">${new Date(
+                        transaction.timestamp
+                      ).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div>
-                    <p class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(transaction.amount)}</p>
-                    <span class="status ${getStatusClass(transaction.status)}">${transaction.status}</span>
+                    <p class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(
+                  transaction.amount
+                )}</p>
+                    <span class="status ${getStatusClass(
+                      transaction.status
+                    )}">${transaction.status}</span>
                   </div>
                 </div>
               `;
-              
-              transactionList.appendChild(transactionDiv);
-              
-              // Add click event to show transaction details
-              transactionDiv.addEventListener("click", () => {
-                // Redirect to transaction details
-                window.location.href = `history.html`;
+
+                transactionList.appendChild(transactionDiv);
+
+                // Add click event to show transaction details
+                transactionDiv.addEventListener("click", () => {
+                  // Redirect to transaction details
+                  window.location.href = `history.html`;
+                });
               });
-            });
-          } else {
-            transactionList.style.display = "none";
-            noTransactions.style.display = "flex";
+            } else {
+              transactionList.style.display = "none";
+              noTransactions.style.display = "flex";
+            }
+          },
+          (error) => {
+            console.error("Error fetching transactions:", error);
+            showToast("Error loading transactions.");
           }
-        }, (error) => {
-          console.error("Error fetching transactions:", error);
-          showToast("Error loading transactions.");
-        });
+        );
       }
 
       // Check if user is logged in
@@ -315,31 +373,78 @@
           window.location.href = "login.html";
         }
       });
-    </script>
 
-    <script>
-        function redirectToLogin() {
-            window.location.href = "login.html";
+      // More button dialog handling
+      const moreBtn = document.getElementById("more-btn");
+      const dialog = document.getElementById("dialog");
+      const overlay = document.getElementById("overlay");
+      const closeBtn = document.getElementById("close-btn");
+      const settings = document.getElementById("settings");
+      const buyElectricity = document.getElementById("buy-electricity");
+      const withdraw = document.getElementById("withdraw");
+
+      // Show the dialog and overlay
+      function openDialog() {
+        dialog.style.display = "block";
+        overlay.style.display = "block";
+      }
+
+      // Hide the dialog and overlay
+      function closeDialog() {
+        dialog.style.display = "none";
+        overlay.style.display = "none";
+      }
+
+      // Event Listeners
+      moreBtn.addEventListener("click", openDialog);
+      closeBtn.addEventListener("click", closeDialog);
+      overlay.addEventListener("click", closeDialog);
+
+      // Service item click handlers
+      settings.addEventListener("click", () => {
+        closeDialog();
+        window.location.href = "settings.html";
+      });
+
+      buyElectricity.addEventListener("click", () => {
+        showToast("Electricity purchase coming soon!");
+        closeDialog();
+      });
+
+      withdraw.addEventListener("click", () => {
+        closeDialog();
+        window.location.href = "withdraw.html";
+      });
+
+      // Close dialog when Escape key is pressed
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && dialog.style.display === "block") {
+          closeDialog();
         }
+      });
 
-        let inactivityTimeout;
-        
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimeout);
-            inactivityTimeout = setTimeout(redirectToLogin, 20000);
-        }
+      // Inactivity timeout
+      function redirectToLogin() {
+        window.location.href = "login.html";
+      }
 
-        document.addEventListener("mousemove", resetInactivityTimer);
-        document.addEventListener("keydown", resetInactivityTimer);
+      let inactivityTimeout;
 
-        resetInactivityTimer();
+      function resetInactivityTimer() {
+        clearTimeout(inactivityTimeout);
+        inactivityTimeout = setTimeout(redirectToLogin, 60000);
+      }
 
-        window.addEventListener("beforeunload", function (event) {
-            const message = "Moniebase is the best";
-            event.returnValue = message;
-            return message; 
-        });
+      document.addEventListener("mousemove", resetInactivityTimer);
+      document.addEventListener("keydown", resetInactivityTimer);
+
+      resetInactivityTimer();
+
+      window.addEventListener("beforeunload", function (event) {
+        const message = "Moniebase is the best";
+        event.returnValue = message;
+        return message;
+      });
     </script>
-
   </body>
 </html>
