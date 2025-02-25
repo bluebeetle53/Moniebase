@@ -9,10 +9,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
     <link rel="stylesheet" href="data.css" />
   </head>
   <body>
@@ -20,19 +16,12 @@
       <i
         class="fas fa-arrow-left"
         onclick="window.location.href='home.html';"
-        style="
-          cursor: pointer;
-          position: absolute;
-          left: 20px;
-          top: 20px;
-          font-size: 1.5em;
-        "
       ></i>
       <h1>Buy Data</h1>
     </header>
 
     <div class="container">
-      <form>
+      <form id="dataForm">
         <div class="form-group">
           <label for="network">Select a Network</label>
           <select id="network">
@@ -54,7 +43,12 @@
         <div class="form-group">
           <label for="phone">Phone Number</label>
           <div class="phone-container">
-            <input type="text" id="phone" placeholder="Enter phone number" />
+            <input
+              type="text"
+              id="phone"
+              placeholder="Enter phone number"
+              maxlength="11"
+            />
             <img
               src="https://cdn.iconscout.com/icon/free/png-512/free-phone-icon-download-in-svg-png-gif-file-formats--mobile-smartphone-telephone-user-interface-icons-set-pack-1617678.png?f=webp&w=512"
               alt="Phone Icon"
@@ -73,6 +67,7 @@
           />
         </div>
 
+        <div class="loader" id="loader"></div>
         <button type="button" id="buyData">Buy Data</button>
       </form>
     </div>
@@ -80,18 +75,35 @@
     <div class="bottom-sheet" id="bottomSheet">
       <div class="sheet-content">
         <img
-          src="https://cdn.iconscout.com/icon/premium/png-512-thumb/warning-43-149965.png?f=webp&w=512"
-          alt="Warning"
+          id="statusIcon"
+          src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
+          alt="Status Icon"
         />
-        <p>
-          Insufficient Balance to purchase data. Please deposit/fund your
-          account to continue.
-        </p>
-        <button id="closeSheet">❌ Close</button>
+        <p id="confirmationMessage"></p>
+        <button id="closeSheet">Close</button>
       </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
     <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
       const dataPlans = {
         MTN: [
           { plan: "1GB", price: 250 },
@@ -128,6 +140,39 @@
         ],
       };
 
+      // Display loading status
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("buyData").disabled = true;
+      }
+
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("buyData").disabled = false;
+      }
+
+      // Show status message in bottom sheet
+      function showStatusMessage(success, message) {
+        const bottomSheet = document.getElementById("bottomSheet");
+        const statusIcon = document.getElementById("statusIcon");
+        const confirmationMessage = document.getElementById(
+          "confirmationMessage"
+        );
+
+        // Set appropriate icon based on success/failure
+        if (success) {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/free/png-256/free-check-verified-successful-accept-tick-yes-success-2822.png?f=webp&w=256";
+        } else {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256";
+        }
+
+        confirmationMessage.innerHTML = message;
+        bottomSheet.style.bottom = "0";
+      }
+
+      // Populate the data plans when network is selected
       document
         .getElementById("network")
         .addEventListener("change", function () {
@@ -141,11 +186,13 @@
               const option = document.createElement("option");
               option.value = plan.price;
               option.textContent = `${plan.plan} - ₦${plan.price}`;
+              option.dataset.plan = plan.plan;
               dataPlanSelect.appendChild(option);
             });
           }
         });
 
+      // Update the amount field when a data plan is selected
       document
         .getElementById("data-plan")
         .addEventListener("change", function () {
@@ -153,16 +200,132 @@
           document.getElementById("amount").value = `₦${selectedAmount}`;
         });
 
-      document.getElementById("buyData").addEventListener("click", () => {
-        // Display the bottom sheet
-        const bottomSheet = document.getElementById("bottomSheet");
-        bottomSheet.style.bottom = "0";
+      // Handle the data purchase
+      document.getElementById("buyData").addEventListener("click", async () => {
+        const network = document.getElementById("network").value;
+        const dataPlanSelect = document.getElementById("data-plan");
+        const amount = parseFloat(dataPlanSelect.value);
+        const dataPlan =
+          dataPlanSelect.options[dataPlanSelect.selectedIndex].dataset.plan;
+        const phoneNumber = document.getElementById("phone").value;
+
+        // Validate input fields
+        if (!network || !amount || !phoneNumber) {
+          showStatusMessage(false, "Please fill out all required fields.");
+          return;
+        }
+
+        // Validate phone number format (should be 11 digits)
+        if (phoneNumber.length !== 11 || !/^\d+$/.test(phoneNumber)) {
+          showStatusMessage(
+            false,
+            "Please enter a valid 11-digit phone number."
+          );
+          return;
+        }
+
+        showLoader();
+
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            hideLoader();
+            showStatusMessage(
+              false,
+              "User not logged in. Please log in to proceed."
+            );
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 2000);
+            return;
+          }
+
+          // Fetch user balance from Firebase
+          const userRef = database.ref("users/" + user.uid);
+          const snapshot = await userRef.once("value");
+          const userData = snapshot.val();
+
+          if (!userData || userData.balance < amount) {
+            hideLoader();
+            showStatusMessage(
+              false,
+              `Your data purchase failed due to insufficient balance. Please fund your account and try again.`
+            );
+            return;
+          }
+
+          // Generate transaction ID
+          const transactionId = "DATA" + Date.now().toString().substring(5);
+
+          // Transaction timestamp
+          const timestamp = firebase.database.ServerValue.TIMESTAMP;
+
+          // Create transaction object
+          const transaction = {
+            type: "data",
+            transactionId: transactionId,
+            user: {
+              userId: user.uid,
+              name: userData.fullName || "User",
+              phone: userData.phone || "",
+            },
+            details: {
+              network: network,
+              dataPlan: dataPlan,
+              phoneNumber: phoneNumber,
+            },
+            amount: amount,
+            status: "success",
+            timestamp: timestamp,
+            formattedDate: new Date().toLocaleString(),
+          };
+
+          // Update user balance
+          const newBalance = userData.balance - amount;
+          await userRef.update({ balance: newBalance });
+
+          // Add to user's transaction history
+          await database
+            .ref(`users/${user.uid}/transactions/${transactionId}`)
+            .set(transaction);
+
+          // Add to global transactions collection
+          await database.ref(`transactions/${transactionId}`).set(transaction);
+
+          hideLoader();
+          showStatusMessage(
+            true,
+            `Your ${dataPlan} data purchase for ${network} (${phoneNumber}) was successful.`
+          );
+
+          // Reset form
+          document.getElementById("dataForm").reset();
+          document.getElementById("amount").value = "";
+
+          // Redirect to transaction history page after 2 seconds
+          setTimeout(() => {
+            window.location.href = "history.html";
+          }, 5000);
+        } catch (error) {
+          hideLoader();
+          console.error("Data purchase error:", error);
+          showStatusMessage(
+            false,
+            "An error occurred while processing your data purchase. Please try again later."
+          );
+        }
       });
 
+      // Close the bottom sheet
       document.getElementById("closeSheet").addEventListener("click", () => {
-        // Hide the bottom sheet
-        const bottomSheet = document.getElementById("bottomSheet");
-        bottomSheet.style.bottom = "-100%";
+        document.getElementById("bottomSheet").style.bottom = "-100%";
+      });
+
+      // Check if user is logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
       });
     </script>
   </body>
