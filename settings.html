@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Settings Page</title>
+    <title>Moniebase Settings</title>
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="settings.css" />
@@ -14,138 +14,194 @@
     <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
   </head>
   <body>
-    <div class="settings">
-      <i class="fas fa-cogs"></i>
-      <span>Settings</span>
-    </div>
+    <header class="header">
+      <div class="header__title">
+        <i class="fas fa-arrow-left" onclick="window.history.back()"></i>
+        <h1>Settings</h1>
+      </div>
+    </header>
 
-    <div class="content">
-      <div class="blue-half"></div>
-      <div class="white-half">
-        <div class="container">
-          <i class="fas fa-user-circle profile-icon"></i>
-          <span id="username">Username</span>
-
-          <div class="linear-view" onclick="showDialog()">
-            <span class="account-limit">Account Limit</span>
-            <i class="fas fa-chevron-right"></i>
-          </div>
-
-          <div class="linear-view" onclick="window.location.href='chat.html';">
-            <span class="account-limit">Customer Care</span>
-            <i class="fas fa-chevron-right"></i>
-          </div>
-
-          <!-- Linear View for "View Wallet ID" -->
-          <div class="linear-view" onclick="showWalletDialog()">
-            <span class="account-limit">View Wallet ID</span>
-            <i class="fas fa-chevron-right"></i>
-          </div>
-
-          <div class="linear-view" onclick="showDialoge()">
-            <span class="account-limit">Delete Account</span>
-            <i class="fas fa-chevron-right"></i>
+    <main class="main-content">
+      <div class="profile-card">
+        <div class="profile-card__avatar">
+          <i class="fas fa-user-circle"></i>
         </div>
-        
+        <h2 id="username" class="profile-card__name">Username</h2>
+      </div>
+
+      <div class="settings-list">
+        <div class="settings-item" onclick="showDialog('account-limit')">
+          <div class="settings-item__content">
+            <i class="fas fa-wallet settings-item__icon"></i>
+            <span class="settings-item__label">Account Limit</span>
+          </div>
+          <i class="fas fa-chevron-right settings-item__arrow"></i>
+        </div>
+
+        <div class="settings-item" onclick="window.location.href='chat.html';">
+          <div class="settings-item__content">
+            <i class="fas fa-headset settings-item__icon"></i>
+            <span class="settings-item__label">Customer Care</span>
+          </div>
+          <i class="fas fa-chevron-right settings-item__arrow"></i>
+        </div>
+
+        <div class="settings-item" onclick="showDialog('wallet-id')">
+          <div class="settings-item__content">
+            <i class="fas fa-id-card settings-item__icon"></i>
+            <span class="settings-item__label">View Wallet ID</span>
+          </div>
+          <i class="fas fa-chevron-right settings-item__arrow"></i>
+        </div>
+
+        <div
+          class="settings-item settings-item--danger"
+          onclick="showDeleteConfirmation()"
+        >
+          <div class="settings-item__content">
+            <i class="fas fa-trash-alt settings-item__icon"></i>
+            <span class="settings-item__label">Delete Account</span>
+          </div>
+          <i class="fas fa-chevron-right settings-item__arrow"></i>
         </div>
       </div>
-    </div>
+    </main>
 
-    <div id="dialog" class="dialog">
+    <!-- Account Limit Dialog -->
+    <div id="account-limit" class="dialog">
       <div class="dialog-content">
         <div class="dialog-header">
           <h3>Account Limit</h3>
-          <button class="close-btn" onclick="closeDialog()">
+          <button class="close-btn" onclick="closeDialog('account-limit')">
             <i class="fas fa-times"></i>
           </button>
         </div>
 
         <div class="dialog-body">
-          <div class="dialog-item">
-            <i class="fas fa-hand-holding-usd icon"></i>
-            <span class="text"
-              >Daily Deposit Limit: <strong>NGN 200,000</strong></span
-            >
+          <div class="limit-item">
+            <div class="limit-item__icon">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <div class="limit-item__details">
+              <span class="limit-item__label">Daily Deposit Limit</span>
+              <span class="limit-item__value">NGN 200,000</span>
+            </div>
           </div>
-          <div class="dialog-item">
-            <i class="fas fa-exchange-alt icon"></i>
-            <span class="text"
-              >Daily Transfer Limit: <strong>NGN 350,000</strong></span
-            >
+
+          <div class="limit-item">
+            <div class="limit-item__icon">
+              <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div class="limit-item__details">
+              <span class="limit-item__label">Daily Transfer Limit</span>
+              <span class="limit-item__value">NGN 350,000</span>
+            </div>
           </div>
-          <div class="dialog-item summary">
-            <i class="fas fa-wallet icon"></i>
-            <span class="text"
-              >Your account can hold up to <strong>NGN 500,000,000</strong> as
-              total balance</span
-            >
+
+          <div class="limit-item limit-item--total">
+            <div class="limit-item__icon">
+              <i class="fas fa-wallet"></i>
+            </div>
+            <div class="limit-item__details">
+              <span class="limit-item__label">Maximum Account Balance</span>
+              <span class="limit-item__value">NGN 500,000,000</span>
+            </div>
           </div>
         </div>
 
         <div class="dialog-footer">
-          <button class="cancel-btn" onclick="closeDialog()">
-            <i class="fas fa-times-circle"></i> Close
+          <button
+            class="btn btn--primary"
+            onclick="closeDialog('account-limit')"
+          >
+            Done
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Dialog for displaying phone number -->
-    <div id="wallet-dialog" class="dialog">
+    <!-- Wallet ID Dialog -->
+    <div id="wallet-id" class="dialog">
       <div class="dialog-content">
         <div class="dialog-header">
-          <h3>Moniebase</h3>
-          <button class="close-btn" onclick="closeDialog()">
+          <h3>Wallet ID</h3>
+          <button class="close-btn" onclick="closeDialog('wallet-id')">
             <i class="fas fa-times"></i>
           </button>
         </div>
+
         <div class="dialog-body">
-          <p id="phone-number">Loading...</p>
+          <div class="wallet-id-container">
+            <i class="fas fa-id-card wallet-id-icon"></i>
+            <p id="phone-number" class="wallet-id-number">Loading...</p>
+            <button
+              id="copy-btn"
+              class="btn btn--outline"
+              onclick="copyWalletId()"
+            >
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-
-
-    <a href="transfer.html">
-        <div class="bottom-nav">
-          <div class="nav-item">
-            <img
-              src="https://cdn.iconscout.com/icon/premium/png-512-thumb/send-1539226-1304320.png?f=webp&w=512"
-              alt="Transfer"
-            />
-            <span>Transfer</span>
-          </div>
-        </a>
-          <a href="airtime.html">
-            <div class="nav-item">
-              <img
-                src="https://cdn.iconscout.com/icon/free/png-512/free-phone-icon-download-in-svg-png-gif-file-formats--call-logo-communication-contact-mobile-marketing-and-growth-pack-business-icons-2212486.png?f=webp&w=512"
-                alt="Airtime"
-              />
-              <span>Airtime</span>
-            </div>
-          </a>
-          <a href="data.html">
-            <div class="nav-item">
-              <img
-                src="https://cdn.iconscout.com/icon/free/png-512/free-internet-icon-download-in-svg-png-gif-file-formats--connection-globe-website-computer-of-thing-pack-science-technology-icons-2378108.png?f=webp&w=512"
-                alt="Data"
-              />
-              <span>Data</span>
-            </div>
-          </a>
-          <a href="deposit.html">
-          <div class="nav-item">
-            <img
-              src="https://cdn.iconscout.com/icon/premium/png-512-thumb/deposit-6404441-5352409.png?f=webp&w=512"
-              alt="Deposit"
-            />
-            <span>Deposit</span>
-          </div>
-          </a>
+    <!-- Delete Account Confirmation Dialog -->
+    <div id="delete-confirmation" class="dialog">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h3>Delete Account</h3>
+          <button
+            class="close-btn"
+            onclick="closeDialog('delete-confirmation')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-    
+
+        <div class="dialog-body">
+          <div class="confirmation-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>
+              Are you sure you want to delete your account? This action cannot
+              be undone.
+            </p>
+          </div>
+        </div>
+
+        <div class="dialog-footer">
+          <button
+            class="btn btn--outline"
+            onclick="closeDialog('delete-confirmation')"
+          >
+            Cancel
+          </button>
+          <button class="btn btn--danger" onclick="deleteUserAccount()">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="bottom-nav">
+      <a href="transfer.html" class="bottom-nav__item">
+        <i class="fas fa-paper-plane"></i>
+        <span>Transfer</span>
+      </a>
+      <a href="airtime.html" class="bottom-nav__item">
+        <i class="fas fa-phone-alt"></i>
+        <span>Airtime</span>
+      </a>
+      <a href="data.html" class="bottom-nav__item">
+        <i class="fas fa-wifi"></i>
+        <span>Data</span>
+      </a>
+      <a href="deposit.html" class="bottom-nav__item">
+        <i class="fas fa-money-bill-wave"></i>
+        <span>Deposit</span>
+      </a>
+    </nav>
 
     <script>
       // Firebase Configuration
@@ -168,18 +224,14 @@
       function displayUsername() {
         const user = auth.currentUser;
 
-        // If the user is authenticated, fetch their username from Firebase
         if (user) {
           const userRef = database.ref("users/" + user.uid);
           userRef.once("value", (snapshot) => {
             const userData = snapshot.val();
             const username = userData ? userData.fullName : "Unknown User";
-
-            // Display the username in the HTML element with id="username"
             document.getElementById("username").textContent = username;
           });
         } else {
-          // If no user is authenticated, check localStorage
           const storedUser = JSON.parse(localStorage.getItem("user"));
           if (storedUser && storedUser.fullName) {
             document.getElementById("username").textContent =
@@ -190,24 +242,28 @@
         }
       }
 
-      // Ensure Firebase Authentication is initialized and user state is updated
-      auth.onAuthStateChanged((user) => {
-        displayUsername(); // Call the function again after the auth state changes
-      });
+      // Show dialog
+      function showDialog(dialogId) {
+        document.getElementById(dialogId).style.display = "flex";
 
-      // Call displayUsername on page load to handle initial user state
-      window.onload = displayUsername;
-    </script>
-
-    <script>
-      // Function to display dialog
-      function showDialog() {
-        document.getElementById("dialog").style.display = "flex";
+        if (dialogId === "wallet-id") {
+          fetchWalletId();
+        }
       }
 
-      // Function to display phone number in the wallet dialog
-      function showWalletDialog() {
-        const userEmail = auth.currentUser ? auth.currentUser.email : null; // Get the current logged-in user's email
+      // Close dialog
+      function closeDialog(dialogId) {
+        document.getElementById(dialogId).style.display = "none";
+      }
+
+      // Show delete confirmation
+      function showDeleteConfirmation() {
+        document.getElementById("delete-confirmation").style.display = "flex";
+      }
+
+      // Fetch and display wallet ID
+      function fetchWalletId() {
+        const userEmail = auth.currentUser ? auth.currentUser.email : null;
 
         if (userEmail) {
           const userRef = database
@@ -219,11 +275,8 @@
             .once("value", (snapshot) => {
               if (snapshot.exists()) {
                 const userData = snapshot.val();
-                const userPhone = Object.values(userData)[0].phone; // Get phone number of the first match
-                document.getElementById(
-                  "phone-number"
-                ).textContent = `Wallet ID: ${userPhone}`;
-                document.getElementById("wallet-dialog").style.display = "flex"; // Open the wallet dialog
+                const userPhone = Object.values(userData)[0].phone;
+                document.getElementById("phone-number").textContent = userPhone;
               } else {
                 document.getElementById("phone-number").textContent =
                   "No user found.";
@@ -232,7 +285,7 @@
             .catch((error) => {
               console.error("Error fetching user data:", error);
               document.getElementById("phone-number").textContent =
-                "Error fetching phone number.";
+                "Error fetching wallet ID.";
             });
         } else {
           document.getElementById("phone-number").textContent =
@@ -240,62 +293,68 @@
         }
       }
 
-      // Function to close the wallet dialog
-      function closeWalletDialog() {
-        document.getElementById("wallet-dialog").style.display = "none";
-      }
+      // Copy wallet ID to clipboard
+      function copyWalletId() {
+        const walletId = document.getElementById("phone-number").textContent;
 
-      // Function to close the general dialog
-      function closeDialog() {
-        document.getElementById("dialog").style.display = "none";
-      }
-    </script>
+        if (
+          walletId &&
+          walletId !== "Loading..." &&
+          walletId !== "No user found." &&
+          walletId !== "Error fetching wallet ID." &&
+          walletId !== "No user logged in."
+        ) {
+          navigator.clipboard.writeText(walletId).then(() => {
+            const copyBtn = document.getElementById("copy-btn");
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied';
 
-<script>
-    // Show confirmation dialog
-    function showDialoge() {
-      if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-        deleteUserAccount();
-      }
-    }
-  
-    // Function to delete user account
-    function deleteUserAccount() {
-      const user = auth.currentUser; // Get the current logged-in user
-  
-      if (user) {
-        // Delete user data from Firebase
-        const userRef = database.ref("users/" + user.uid);
-        
-        userRef.remove()  // Remove data from Firebase
-          .then(() => {
-            console.log("User data deleted from Moniebase.");
-            // Delete user from Firebase Authentication (delete the user account)
-            user.delete()
-              .then(() => {
-                console.log("User account deleted from Moniebase.");
-                // Remove user data from localStorage
-                localStorage.removeItem("user");
-  
-                // Redirect to login page
-                window.location.href = "login.html";
-              })
-              .catch((error) => {
-                console.error("Error deleting user account: ", error);
-                alert("Error deleting user account: " + error.message);
-              });
-          })
-          .catch((error) => {
-            console.error("Error deleting user data on Moniebase: ", error);
-            alert("Error deleting user data: " + error.message);
+            setTimeout(() => {
+              copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            }, 2000);
           });
-      } else {
-        console.log("No user logged in.");
-        alert("You need to be logged in to delete your account.");
+        }
       }
-    }
-  </script>
-  
+
+      // Function to delete user account
+      function deleteUserAccount() {
+        const user = auth.currentUser;
+
+        if (user) {
+          const userRef = database.ref("users/" + user.uid);
+
+          userRef
+            .remove()
+            .then(() => {
+              console.log("User data deleted from Moniebase.");
+              user
+                .delete()
+                .then(() => {
+                  console.log("User account deleted from Moniebase.");
+                  localStorage.removeItem("user");
+                  window.location.href = "login.html";
+                })
+                .catch((error) => {
+                  console.error("Error deleting user account: ", error);
+                  alert("Error deleting user account: " + error.message);
+                });
+            })
+            .catch((error) => {
+              console.error("Error deleting user data on Moniebase: ", error);
+              alert("Error deleting user data: " + error.message);
+            });
+        } else {
+          console.log("No user logged in.");
+          alert("You need to be logged in to delete your account.");
+        }
+      }
+
+      // Ensure Firebase Authentication is initialized and user state is updated
+      auth.onAuthStateChanged((user) => {
+        displayUsername();
+      });
+
+      // Call displayUsername on page load to handle initial user state
+      window.onload = displayUsername;
+    </script>
   </body>
 </html>
-
