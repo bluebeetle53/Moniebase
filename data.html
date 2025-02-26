@@ -114,12 +114,12 @@
           { plan: "10GB", price: 2500 },
         ],
         AIRTEL: [
-          { plan: "1GB", price: 300 },
-          { plan: "2GB", price: 600 },
-          { plan: "3GB", price: 900 },
-          { plan: "4GB", price: 1200 },
-          { plan: "5GB", price: 1500 },
-          { plan: "10GB", price: 3000 },
+          { plan: "1GB", price: 400 },
+          { plan: "2GB", price: 800 },
+          { plan: "3GB", price: 1200 },
+          { plan: "4GB", price: 1600 },
+          { plan: "5GB", price: 2000 },
+          { plan: "10GB", price: 4000 },
         ],
         GLO: [
           { plan: "200MB", price: 60 },
@@ -151,8 +151,8 @@
         document.getElementById("buyData").disabled = false;
       }
 
-      // Show status message in bottom sheet
-      function showStatusMessage(success, message) {
+      // Show status message in bottom sheet with specific transaction details
+      function showStatusMessage(success, message, transactionDetails = null) {
         const bottomSheet = document.getElementById("bottomSheet");
         const statusIcon = document.getElementById("statusIcon");
         const confirmationMessage = document.getElementById(
@@ -163,6 +163,53 @@
         if (success) {
           statusIcon.src =
             "https://cdn.iconscout.com/icon/free/png-256/free-check-verified-successful-accept-tick-yes-success-2822.png?f=webp&w=256";
+
+          // For successful transactions, format a detailed message
+          if (transactionDetails) {
+            const {
+              network,
+              dataPlan,
+              phoneNumber,
+              amount,
+              transactionId,
+              timestamp,
+            } = transactionDetails;
+
+            // Format date and time
+            const date = new Date(timestamp);
+            const formattedDate = date.toLocaleDateString();
+            const formattedTime = date.toLocaleTimeString();
+
+            message = `
+              <div class="transaction-details">
+                <p class="success-header">Data Purchase Successful!</p>
+                <div class="detail-item">
+                  <span class="detail-label">Bundle:</span>
+                  <span class="detail-value">${network} ${dataPlan}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Phone Number:</span>
+                  <span class="detail-value">${phoneNumber}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Amount:</span>
+                  <span class="detail-value">₦${amount}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Date:</span>
+                  <span class="detail-value">${formattedDate}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Time:</span>
+                  <span class="detail-value">${formattedTime}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Reference ID:</span>
+                  <span class="detail-value">${transactionId}</span>
+                </div>
+              </div>
+            `;
+          }
         } else {
           statusIcon.src =
             "https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256";
@@ -293,19 +340,32 @@
           await database.ref(`transactions/${transactionId}`).set(transaction);
 
           hideLoader();
+
+          // Create transaction details object for specific success message
+          const transactionDetails = {
+            network: network,
+            dataPlan: dataPlan,
+            phoneNumber: phoneNumber,
+            amount: amount,
+            transactionId: transactionId,
+            timestamp: Date.now(), // Using client time since server timestamp isn't available yet
+          };
+
+          // Show detailed success message
           showStatusMessage(
             true,
-            `Your ${dataPlan} data purchase for ${network} (${phoneNumber}) was successful.`
+            "", // Empty message will be replaced with formatted details
+            transactionDetails
           );
 
           // Reset form
           document.getElementById("dataForm").reset();
           document.getElementById("amount").value = "";
 
-          // Redirect to transaction history page after 2 seconds
+          // Redirect to transaction history page after 5 seconds
           setTimeout(() => {
             window.location.href = "history.html";
-          }, 5000);
+          }, 10000);
         } catch (error) {
           hideLoader();
           console.error("Data purchase error:", error);
