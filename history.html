@@ -907,7 +907,6 @@
           return;
         }
 
-        // In a real app, this would generate a PDF receipt
         // For now, we'll just simulate the download with an alert
         alert(
           `Generating receipt for transaction ${transactionId}. The download will start shortly.`
@@ -931,16 +930,11 @@
           return;
         }
 
-        // In a real app, this would open a form to report an issue
+        
         // For now, we'll just show an alert
         alert(
           `You're about to report an issue with transaction ${transactionId}.`
         );
-
-        // In a real implementation, you would:
-        // 1. Open a modal with a form to report the issue
-        // 2. Submit the form to an API
-        // 3. Show a confirmation message
       }
 
       // Repeat transaction functionality
@@ -961,7 +955,6 @@
           return;
         }
 
-        // In a real app, this would pre-fill a transfer form
         // For now, we'll just show an alert
         alert(
           `Preparing to repeat transfer to ${
