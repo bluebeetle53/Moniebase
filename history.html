@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transaction History</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      header {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      header i {
+        font-size: 24px;
+        color: white;
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        cursor: pointer;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        padding: 0;
+        margin-left: 40px;
+      }
+
+      .container {
+        margin: 20px;
+        padding-bottom: 70px;
+      }
+
+      .filter-controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        align-items: center;
+      }
+
+      .filter-button {
+        background-color: white;
+        border: 1px solid #ddd;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .filter-button.active {
+        background-color: #2f4f7f;
+        color: white;
+        border-color: #2f4f7f;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        border-radius: 5px;
+        padding: 5px 10px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+      }
+
+      .search-box i {
+        color: #888;
+        margin-right: 5px;
+      }
+
+      .search-box input {
+        border: none;
+        flex-grow: 1;
+        padding: 8px 5px;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .transaction {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        position: relative;
+        transition: transform 0.2s;
+      }
+
+      .transaction:active {
+        transform: scale(0.98);
+      }
+
+      .transaction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .transaction-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #f0f6ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+      }
+
+      .transaction-icon i {
+        color: #2f4f7f;
+        font-size: 18px;
+      }
+
+      .transaction-info {
+        flex-grow: 1;
+      }
+
+      .transaction-amount {
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .credit {
+        color: #28a745;
+      }
+
+      .debit {
+        color: #dc3545;
+      }
+
+      .transaction-details {
+        display: flex;
+        align-items: center;
+      }
+
+      .transaction p {
+        margin: 5px 0;
+        font-size: 14px;
+      }
+
+      .transaction .date {
+        color: #888;
+        font-size: 12px;
+      }
+
+      .transaction .status {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .status-success {
+        background-color: #e6f7ee;
+        color: #28a745;
+      }
+
+      .status-pending {
+        background-color: #fff8e6;
+        color: #ffc107;
+      }
+
+      .status-failed {
+        background-color: #feebeb;
+        color: #dc3545;
+      }
+
+      .transaction-id {
+        color: #666;
+        font-size: 11px;
+      }
+
+      .no-transactions {
+        text-align: center;
+        padding: 40px 0;
+        color: #888;
+      }
+
+      .no-transactions i {
+        font-size: 50px;
+        color: #ddd;
+        margin-bottom: 15px;
+      }
+
+      .loader {
+        display: flex;
+        justify-content: center;
+        padding: 30px 0;
+      }
+
+      .loader-circle {
+        width: 30px;
+        height: 30px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #2f4f7f;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .date-header {
+        font-size: 13px;
+        font-weight: bold;
+        color: #666;
+        margin: 20px 0 10px 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .pagination-button {
+        background-color: white;
+        border: 1px solid #ddd;
+        padding: 8px 15px;
+        margin: 0 5px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .pagination-button.active {
+        background-color: #2f4f7f;
+        color: white;
+        border-color: #2f4f7f;
+      }
+
+      .pagination-button:disabled {
+        background-color: #f5f5f5;
+        color: #aaa;
+        cursor: not-allowed;
+      }
+
+      /* New styles for detail modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-container {
+        background-color: white;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 20px 20px 0 0;
+        overflow: hidden;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+      }
+
+      .modal-overlay.active .modal-container {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        position: relative;
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        text-align: center;
+      }
+
+      .modal-close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        font-size: 20px;
+        color: #666;
+        cursor: pointer;
+      }
+
+      .modal-handle {
+        width: 40px;
+        height: 5px;
+        background-color: #ddd;
+        border-radius: 3px;
+        margin: 0 auto 10px;
+      }
+
+      .modal-body {
+        padding: 20px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .detail-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .detail-icon {
+        width: 60px;
+        height: 60px;
+        background-color: #f0f6ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+      }
+
+      .detail-icon i {
+        color: #2f4f7f;
+        font-size: 28px;
+      }
+
+      .detail-amount {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .detail-title {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .detail-status {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 10px 0;
+      }
+
+      .detail-card {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .detail-value {
+        font-weight: bold;
+        font-size: 14px;
+        text-align: right;
+        word-break: break-word;
+        max-width: 60%;
+      }
+
+      .detail-action {
+        display: block;
+        background-color: #f0f6ff;
+        color: #2f4f7f;
+        border: none;
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: bold;
+        margin-top: 15px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <i
+        class="fas fa-arrow-left"
+        onclick="window.location.href='home.html';"
+      ></i>
+      <h1>Transaction History</h1>
+    </header>
+
+    <div class="container">
+      <div class="filter-controls">
+        <div>
+          <button class="filter-button active" data-filter="all">All</button>
+          <button class="filter-button" data-filter="transfer">
+            Transfers
+          </button>
+          <button class="filter-button" data-filter="deposit">Deposits</button>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search transactions..."
+        />
+      </div>
+
+      <div id="loader" class="loader">
+        <div class="loader-circle"></div>
+      </div>
+
+      <div id="transactionContainer">
+        <!-- Transactions will be dynamically inserted here -->
+      </div>
+
+      <div class="pagination" id="pagination">
+        <!-- Pagination will be dynamically inserted here -->
+      </div>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-handle"></div>
+          <h2>Transaction Details</h2>
+          <div class="modal-close" onclick="closeDetailModal()">
+            <i class="fas fa-times"></i>
+          </div>
+        </div>
+        <div class="modal-body" id="detailContent">
+          <!-- Detail content will be inserted here -->
+        </div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+    <script>
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // State variables
+      let allTransactions = [];
+      let filteredTransactions = [];
+      let currentFilter = "all";
+      let currentPage = 1;
+      const transactionsPerPage = 10;
+
+      // Format currency
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 2,
+        }).format(amount);
+      }
+
+      // Format date for grouping
+      function formatDateForGrouping(dateString) {
+        const date = new Date(dateString);
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        if (date.toDateString() === today.toDateString()) {
+          return "Today";
+        } else if (date.toDateString() === yesterday.toDateString()) {
+          return "Yesterday";
+        } else {
+          return date.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          });
+        }
+      }
+
+      // Get transaction icon based on type
+      function getTransactionIcon(type) {
+        switch (type) {
+          case "transfer":
+            return '<i class="fas fa-paper-plane"></i>';
+          case "deposit":
+            return '<i class="fas fa-download"></i>';
+          case "withdrawal":
+            return '<i class="fas fa-upload"></i>';
+          default:
+            return '<i class="fas fa-exchange-alt"></i>';
+        }
+      }
+
+      // Get transaction status class
+      function getStatusClass(status) {
+        switch (status) {
+          case "success":
+            return "status-success";
+          case "pending":
+            return "status-pending";
+          case "failed":
+            return "status-failed";
+          default:
+            return "status-success";
+        }
+      }
+
+      // Get transaction title
+      function getTransactionTitle(transaction) {
+        if (transaction.type === "transfer") {
+          return `Transfer to ${
+            transaction.recipient?.accountName || "Unknown"
+          }`;
+        } else if (transaction.type === "deposit") {
+          return `Deposit from ${transaction.sender?.name || "Unknown"}`;
+        } else if (transaction.type === "withdrawal") {
+          return `Withdrawal`;
+        }
+        return "Transaction";
+      }
+
+      // Format date and time nicely
+      function formatDateTime(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      }
+
+      // Show transaction detail modal with enhanced details
+      function showTransactionDetail(transaction) {
+        const detailContent = document.getElementById("detailContent");
+        const modal = document.getElementById("detailModal");
+        const amountClass = transaction.type === "deposit" ? "credit" : "debit";
+        const amountPrefix = transaction.type === "deposit" ? "+" : "-";
+
+        // Generate enhanced content for the detail modal
+        let content = `
+        <div class="detail-header">
+          <div class="detail-icon">
+            ${getTransactionIcon(transaction.type)}
+          </div>
+          <div class="detail-amount ${amountClass}">${amountPrefix}${formatCurrency(
+          transaction.amount
+        )}</div>
+          <div class="detail-title">${getTransactionTitle(transaction)}</div>
+          <div class="detail-status ${getStatusClass(transaction.status)}">${
+          transaction.status
+        }</div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-row">
+            <div class="detail-label">Transaction Type</div>
+            <div class="detail-value">${
+              transaction.type.charAt(0).toUpperCase() +
+              transaction.type.slice(1)
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Date & Time</div>
+            <div class="detail-value">${formatDateTime(
+              transaction.formattedDate
+            )}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Transaction ID</div>
+            <div class="detail-value">${transaction.transactionId}</div>
+          </div>
+      `;
+
+        // Add amount details section
+        content += `
+        <div class="detail-row">
+          <div class="detail-label">Amount</div>
+          <div class="detail-value">${formatCurrency(transaction.amount)}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Transaction Fee</div>
+          <div class="detail-value">${formatCurrency(
+            transaction.fee || 0
+          )}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Total</div>
+          <div class="detail-value">${formatCurrency(
+            transaction.amount + (transaction.fee || 0)
+          )}</div>
+        </div>
+      `;
+
+        // Add recipient details if it's a transfer with enhanced information
+        if (transaction.type === "transfer" && transaction.recipient) {
+          content += `
+          <div class="detail-row">
+            <div class="detail-label">Recipient Name</div>
+            <div class="detail-value">${
+              transaction.recipient.accountName || "N/A"
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Recipient Account</div>
+            <div class="detail-value">${
+              transaction.recipient.accountNumber || "N/A"
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Bank</div>
+            <div class="detail-value">${
+              transaction.recipient.bankName || "N/A"
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Transfer Type</div>
+            <div class="detail-value">${
+              transaction.transferType || "Standard Transfer"
+            }</div>
+          </div>
+        `;
+        }
+
+        // Add sender details if it's a deposit with enhanced information
+        if (transaction.type === "deposit" && transaction.sender) {
+          content += `
+          <div class="detail-row">
+            <div class="detail-label">Sender Name</div>
+            <div class="detail-value">${transaction.sender.name || "N/A"}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Sender Account</div>
+            <div class="detail-value">${
+              transaction.sender.accountNumber || "N/A"
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Sender Bank</div>
+            <div class="detail-value">${
+              transaction.sender.bankName || "N/A"
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Deposit Method</div>
+            <div class="detail-value">${
+              transaction.depositMethod || "Bank Transfer"
+            }</div>
+          </div>
+        `;
+        }
+
+        // Add withdrawal details if applicable
+        if (transaction.type === "withdrawal") {
+          content += `
+          <div class="detail-row">
+            <div class="detail-label">Withdrawal Method</div>
+            <div class="detail-value">${
+              transaction.withdrawalMethod || "Bank Transfer"
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Destination Account</div>
+            <div class="detail-value">${
+              transaction.destinationAccount || "N/A"
+            }</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Destination Bank</div>
+            <div class="detail-value">${
+              transaction.destinationBank || "N/A"
+            }</div>
+          </div>
+        `;
+        }
+
+        // Add transaction status details
+        content += `
+        <div class="detail-row">
+          <div class="detail-label">Status</div>
+          <div class="detail-value">${transaction.status}</div>
+        </div>
+      `;
+
+        // Add status timestamps if available
+        if (transaction.timestamps) {
+          content += `
+          <div class="detail-row">
+            <div class="detail-label">Initiated</div>
+            <div class="detail-value">${formatDateTime(
+              transaction.timestamps.initiated || transaction.formattedDate
+            )}</div>
+          </div>
+        `;
+
+          if (transaction.timestamps.processed) {
+            content += `
+            <div class="detail-row">
+              <div class="detail-label">Processed</div>
+              <div class="detail-value">${formatDateTime(
+                transaction.timestamps.processed
+              )}</div>
+            </div>
+          `;
+          }
+
+          if (transaction.timestamps.completed) {
+            content += `
+            <div class="detail-row">
+              <div class="detail-label">Completed</div>
+              <div class="detail-value">${formatDateTime(
+                transaction.timestamps.completed
+              )}</div>
+            </div>
+          `;
+          }
+        }
+
+        // Add narration if available
+        if (transaction.narration) {
+          content += `
+          <div class="detail-row">
+            <div class="detail-label">Narration</div>
+            <div class="detail-value">${transaction.narration}</div>
+          </div>
+        `;
+        }
+
+        // Add reference numbers if available
+        if (transaction.reference) {
+          content += `
+          <div class="detail-row">
+            <div class="detail-label">Reference Number</div>
+            <div class="detail-value">${transaction.reference}</div>
+          </div>
+        `;
+        }
+
+        content += `</div>`; // Close detail card
+
+        // Add balance information if available
+        if (transaction.balanceAfter !== undefined) {
+          content += `
+          <div class="detail-card">
+            <div class="detail-row">
+              <div class="detail-label">Balance Before</div>
+              <div class="detail-value">${formatCurrency(
+                transaction.balanceBefore || 0
+              )}</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Balance After</div>
+              <div class="detail-value">${formatCurrency(
+                transaction.balanceAfter
+              )}</div>
+            </div>
+          </div>
+        `;
+        }
+
+        // Add action buttons with enhanced functionality
+        content += `
+        <button class="detail-action" onclick="reportIssue('${transaction.transactionId}')">
+          <i class="fas fa-flag"></i> Report an Issue
+        </button>
+        <button class="detail-action" onclick="shareReceipt('${transaction.transactionId}')">
+          <i class="fas fa-share-alt"></i> Share Receipt
+        </button>
+        <button class="detail-action" onclick="downloadReceipt('${transaction.transactionId}')">
+          <i class="fas fa-download"></i> Download Receipt
+        </button>
+      `;
+
+        // Add additional button for repeating transaction if it's a transfer
+        if (transaction.type === "transfer") {
+          content += `
+          <button class="detail-action" onclick="repeatTransaction('${transaction.transactionId}')">
+            <i class="fas fa-redo"></i> Repeat Transaction
+          </button>
+        `;
+        }
+
+        // Set content and show modal
+        detailContent.innerHTML = content;
+        modal.classList.add("active");
+
+        // Prevent body scrolling when modal is open
+        document.body.style.overflow = "hidden";
+      }
+
+      // Close transaction detail modal
+      function closeDetailModal() {
+        const modal = document.getElementById("detailModal");
+        modal.classList.remove("active");
+        document.body.style.overflow = "auto";
+      }
+
+      // Share receipt functionality
+      function shareReceipt(transactionId) {
+        // First find the transaction
+        const transaction = allTransactions.find(
+          (t) => t.transactionId === transactionId
+        );
+
+        if (!transaction) {
+          alert("Transaction not found.");
+          return;
+        }
+
+        // Create shareable content
+        const shareText =
+          `Transaction Receipt\n` +
+          `ID: ${transaction.transactionId}\n` +
+          `Type: ${transaction.type}\n` +
+          `Amount: ${formatCurrency(transaction.amount)}\n` +
+          `Date: ${formatDateTime(transaction.formattedDate)}\n` +
+          `Status: ${transaction.status}`;
+
+        if (navigator.share) {
+          navigator
+            .share({
+              title: "Transaction Receipt",
+              text: shareText,
+              url: window.location.href,
+            })
+            .catch((error) => console.log("Error sharing:", error));
+        } else {
+          // Fallback for browsers that don't support Web Share API
+          // Create a temporary textarea element to copy the text to clipboard
+          const textArea = document.createElement("textarea");
+          textArea.value = shareText;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+          alert("Receipt copied to clipboard!");
+        }
+      }
+
+      // Download receipt functionality
+      function downloadReceipt(transactionId) {
+        // Find the transaction
+        const transaction = allTransactions.find(
+          (t) => t.transactionId === transactionId
+        );
+
+        if (!transaction) {
+          alert("Transaction not found.");
+          return;
+        }
+
+        // For now, we'll just simulate the download with an alert
+        alert(
+          `Generating receipt for transaction ${transactionId}. The download will start shortly.`
+        );
+
+        // In a real implementation, you would:
+        // 1. Call an API to generate the receipt
+        // 2. Create a download link for the receipt
+        // 3. Trigger the download
+      }
+
+      // Report issue functionality
+      function reportIssue(transactionId) {
+        // Find the transaction
+        const transaction = allTransactions.find(
+          (t) => t.transactionId === transactionId
+        );
+
+        if (!transaction) {
+          alert("Transaction not found.");
+          return;
+        }
+
+        // For now, we'll just show an alert
+        alert(
+          `You're about to report an issue with transaction ${transactionId}`
+        );
+
+        // In a real implementation, you would:
+        // 1. Open a modal with a form to report the issue
+        // 2. Submit the form to an API
+        // 3. Show a confirmation message
+      }
+
+      // Repeat transaction functionality
+      function repeatTransaction(transactionId) {
+        // Find the transaction
+        const transaction = allTransactions.find(
+          (t) => t.transactionId === transactionId
+        );
+
+        if (!transaction) {
+          alert("Transaction not found.");
+          return;
+        }
+
+        // Check if it's a transfer
+        if (transaction.type !== "transfer") {
+          alert("Only transfer transactions can be repeated.");
+          return;
+        }
+
+        // For now, we'll just show an alert
+        alert(
+          `Preparing to repeat transfer to ${
+            transaction.recipient?.accountName || "Unknown"
+          } for ${formatCurrency(transaction.amount)}`
+        );
+
+        // In a real implementation, you would:
+        // 1. Store the transaction details in localStorage or state
+        // 2. Redirect to the transfer page
+        // 3. Pre-fill the form with the transaction details
+      }
+
+      // Apply filters and search
+      function applyFiltersAndSearch() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+
+        filteredTransactions = allTransactions.filter((transaction) => {
+          // Apply type filter
+          const matchesType =
+            currentFilter === "all" || transaction.type === currentFilter;
+
+          // Apply search filter - enhanced to search more fields
+          const searchableContent = [
+            transaction.recipient?.accountName || "",
+            transaction.recipient?.accountNumber || "",
+            transaction.recipient?.bankName || "",
+            transaction.transactionId || "",
+            transaction.narration || "",
+            transaction.sender?.name || "",
+            transaction.sender?.accountNumber || "",
+            transaction.sender?.bankName || "",
+            transaction.reference || "",
+            transaction.status || "",
+            formatCurrency(transaction.amount) || "",
+            formatDateTime(transaction.formattedDate) || "",
+            transaction.type || "",
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          const matchesSearch =
+            searchTerm === "" || searchableContent.includes(searchTerm);
+
+          return matchesType && matchesSearch;
+        });
+
+        renderTransactions();
+      }
+
+      // Render transactions with pagination
+      function renderTransactions() {
+        const container = document.getElementById("transactionContainer");
+        container.innerHTML = "";
+
+        // Hide loader
+        document.getElementById("loader").style.display = "none";
+
+        if (filteredTransactions.length === 0) {
+          container.innerHTML = `
+          <div class="no-transactions">
+            <i class="fas fa-receipt"></i>
+            <p>No transactions found</p>
+          </div>
+        `;
+          document.getElementById("pagination").style.display = "none";
+          return;
+        }
+
+        // Calculate pagination
+        const totalPages = Math.ceil(
+          filteredTransactions.length / transactionsPerPage
+        );
+        if (currentPage > totalPages) {
+          currentPage = 1;
+        }
+
+        const start = (currentPage - 1) * transactionsPerPage;
+        const end = Math.min(
+          start + transactionsPerPage,
+          filteredTransactions.length
+        );
+        const paginatedTransactions = filteredTransactions.slice(start, end);
+
+        // Group transactions by date
+        const groupedTransactions = {};
+        paginatedTransactions.forEach((transaction) => {
+          const dateGroup = formatDateForGrouping(transaction.formattedDate);
+          if (!groupedTransactions[dateGroup]) {
+            groupedTransactions[dateGroup] = [];
+          }
+          groupedTransactions[dateGroup].push(transaction);
+        });
+
+        // Render grouped transactions
+        Object.keys(groupedTransactions).forEach((dateGroup) => {
+          const dateHeader = document.createElement("div");
+          dateHeader.className = "date-header";
+          dateHeader.textContent = dateGroup;
+          container.appendChild(dateHeader);
+
+          groupedTransactions[dateGroup].forEach((transaction) => {
+            const transactionDiv = document.createElement("div");
+            transactionDiv.className = "transaction";
+            transactionDiv.setAttribute("data-id", transaction.transactionId);
+
+            const amountClass =
+              transaction.type === "deposit" ? "credit" : "debit";
+            const amountPrefix = transaction.type === "deposit" ? "+" : "-";
+
+            // Enhanced transaction list item with more details
+            transactionDiv.innerHTML = `
+            <div class="transaction-header">
+              <div class="transaction-details">
+                <div class="transaction-icon">
+                  ${getTransactionIcon(transaction.type)}
+                </div>
+                <div class="transaction-info">
+                  <p><strong>${getTransactionTitle(transaction)}</strong></p>
+                  <p class="date">${new Date(
+                    transaction.formattedDate
+                  ).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}</p>
+                  <p class="transaction-id">ID: ${transaction.transactionId}</p>
+                  ${
+                    transaction.reference
+                      ? `<p class="transaction-reference">Ref: ${transaction.reference}</p>`
+                      : ""
+                  }
+                </div>
+              </div>
+              <div>
+                <p class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(
+              transaction.amount
+            )}</p>
+                <span class="status ${getStatusClass(transaction.status)}">${
+              transaction.status
+            }</span>
+              </div>
+            </div>
+            ${
+              transaction.narration
+                ? `<p class="narration">${transaction.narration}</p>`
+                : ""
+            }
+          `;
+
+            container.appendChild(transactionDiv);
+
+            // Add click event to show transaction details
+            transactionDiv.addEventListener("click", () => {
+              showTransactionDetail(transaction);
+            });
+          });
+        });
+
+        // Render pagination
+        renderPagination(totalPages);
+      }
+
+      // Render pagination controls
+      function renderPagination(totalPages) {
+        const paginationDiv = document.getElementById("pagination");
+        paginationDiv.innerHTML = "";
+        paginationDiv.style.display = totalPages > 1 ? "flex" : "none";
+
+        if (totalPages <= 1) return;
+
+        // Previous button
+        const prevButton = document.createElement("button");
+        prevButton.className = "pagination-button";
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderTransactions();
+          }
+        });
+        paginationDiv.appendChild(prevButton);
+
+        // Page numbers
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+
+        if (endPage - startPage < 4) {
+          startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          const pageButton = document.createElement("button");
+          pageButton.className = `pagination-button ${
+            i === currentPage ? "active" : ""
+          }`;
+          pageButton.textContent = i;
+          pageButton.addEventListener("click", () => {
+            currentPage = i;
+            renderTransactions();
+          });
+          paginationDiv.appendChild(pageButton);
+        }
+
+        // Next button
+        const nextButton = document.createElement("button");
+        nextButton.className = "pagination-button";
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener("click", () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderTransactions();
+          }
+        });
+        paginationDiv.appendChild(nextButton);
+      }
+
+      // Set up filter buttons
+      document.querySelectorAll(".filter-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".filter-button").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+          button.classList.add("active");
+          currentFilter = button.getAttribute("data-filter");
+          currentPage = 1;
+          applyFiltersAndSearch();
+        });
+      });
+
+      // Set up search input with debounce for better performance
+      let searchTimeout;
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          currentPage = 1;
+          applyFiltersAndSearch();
+        }, 300); // 300ms debounce
+      });
+
+      // Close modal when clicking outside or pressing escape
+      window.addEventListener("click", (event) => {
+        const modal = document.getElementById("detailModal");
+        if (event.target === modal) {
+          closeDetailModal();
+        }
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeDetailModal();
+        }
+      });
+
+      // Fetch and display transactions with error handling
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // Show loader
+          document.getElementById("loader").style.display = "flex";
+
+          const userTransactionsRef = database.ref(
+            `users/${user.uid}/transactions`
+          );
+
+          userTransactionsRef.on(
+            "value",
+            (snapshot) => {
+              allTransactions = [];
+              const transactions = snapshot.val();
+
+              if (transactions) {
+                // Convert to array and sort by timestamp (newest first)
+                allTransactions = Object.values(transactions)
+                  .map((transaction) => {
+                    // Ensure each transaction has all required fields
+                    return {
+                      ...transaction,
+                      formattedDate:
+                        transaction.formattedDate ||
+                        new Date(
+                          transaction.timestamp || Date.now()
+                        ).toISOString(),
+                      status: transaction.status || "pending",
+                      fee: transaction.fee || 0,
+
+                      // Add any other default properties here
+                    };
+                  })
+                  .sort((a, b) => {
+                    return (b.timestamp || 0) - (a.timestamp || 0);
+                  });
+              }
+
+              currentPage = 1;
+              applyFiltersAndSearch();
+            },
+            (error) => {
+              console.error("Error fetching transactions:", error);
+              document.getElementById("loader").style.display = "none";
+              document.getElementById("transactionContainer").innerHTML = `
+              <div class="no-transactions">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error loading transactions. Please try again later.</p>
+                <button class="filter-button" onclick="location.reload()">Retry</button>
+              </div>
+            `;
+            }
+          );
+        } else {
+          // Redirect to login if not logged in
+          window.location.href = "login.html";
+        }
+      });
+    </script>
+  </body>
+</html>
