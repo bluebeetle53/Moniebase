@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bank Transfer</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 15px;
+        text-align: left;
+      }
+
+      header i {
+        font-size: 24px;
+        color: white;
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        cursor: pointer;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        padding: 0;
+        margin-left: 40px;
+      }
+
+      .container {
+        margin: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 93%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+      }
+
+      .form-group input:disabled {
+        background-color: #f5f5f5;
+      }
+
+      #proceedButton {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 90%;
+        margin: 0 auto;
+        display: block;
+      }
+
+      #proceedButton:hover {
+        background-color: #2f4f7f;
+      }
+
+      .bottom-sheet {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 20px;
+        text-align: center;
+        transition: bottom 0.3s ease;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 15px 15px 0 0;
+      }
+
+      .sheet-content img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .sheet-content p {
+        font-size: 16px;
+        margin: 20px 0;
+      }
+
+      #closeSheet {
+        background-color: #f5f5f5;
+        color: #333;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      #closeSheet:hover {
+        background-color: #e0e0e0;
+      }
+
+      .loader {
+        display: none;
+        border: 5px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 5px solid #2f4f7f;
+        width: 30px;
+        height: 30px;
+        margin: 20px auto;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Styles for account verification status */
+      .verification-status {
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .verification-pending {
+        color: #f39c12;
+      }
+
+      .verification-success {
+        color: #27ae60;
+      }
+
+      .verification-error {
+        color: #e74c3c;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <i
+        class="fas fa-arrow-left"
+        onclick="window.location.href='home.html';"
+      ></i>
+      <h1>Transfer Cash</h1>
+    </header>
+
+    <div class="container">
+      <form id="transferForm">
+        <div class="form-group">
+          <label for="accountNumber">Account Number</label>
+          <input
+            type="text"
+            id="accountNumber"
+            placeholder="Enter Account Number"
+            maxlength="10"
+          />
+          <div id="accountNumberStatus" class="verification-status"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="bank">Select Bank</label>
+          <select id="bank">
+            <option value="" disabled selected>Select Bank</option>
+            <option value="044">Access Bank</option>
+            <option value="050">Ecobank</option>
+            <option value="058">GTBank</option>
+            <option value="011">First Bank</option>
+            <option value="032">Union Bank</option>
+            <option value="033">United Bank for Africa</option>
+            <option value="035">Wema Bank</option>
+            <option value="057">Zenith Bank</option>
+            <option value="084">Enterprise Bank Plc</option>
+            <option value="070">Fidelity Bank Plc</option>
+            <option value="011">First Bank of Nigeria Plc</option>
+            <option value="214">First City Monument Bank Plc</option>
+            <option value="058">Guaranty Trust Bank Plc</option>
+            <option value="030">Heritage Banking Company Ltd</option>
+            <option value="301">Jaiz Bank Plc</option>
+            <option value="082">Keystone Bank Ltd</option>
+            <option value="014">Mainstreet Bank Plc</option>
+            <option value="076">Skye Bank Plc</option>
+            <option value="039">Stanbic IBTC Bank Plc</option>
+            <option value="232">Sterling Bank Plc</option>
+            <option value="032">Union Bank of Nigeria Plc</option>
+            <option value="033">United Bank for Africa Plc</option>
+            <option value="215">Unity Bank Plc</option>
+            <option value="035">Wema Bank Plc</option>
+            <option value="057">Zenith Bank Plc</option>
+            <option value="068">Standard Chartered Bank Nigeria Ltd</option>
+            <option value="502">Rand Merchant Bank</option>
+            <option value="526">Parallex Bank</option>
+            <option value="101">Providus Bank</option>
+            <option value="120">Globus Bank</option>
+            <option value="100">Titan Trust Bank</option>
+            <option value="023">CitiBank Nigeria</option>
+            <option value="526">Rubies Microfinance Bank</option>
+            <option value="999">Kuda Microfinance Bank</option>
+            <option value="101">Access Holdings Plc</option>
+            <option value="102">FBN Holdings Plc</option>
+            <option value="103">FCMB Group Plc</option>
+            <option value="104">Guaranty Trust Bank Plc</option>
+            <option value="105">First Bank of Nigeria Ltd</option>
+            <option value="106">Union Bank of Nigeria Plc</option>
+            <option value="107">Stanbic IBTC Holdings Plc</option>
+            <option value="108">Zenith Bank Plc</option>
+            <option value="109">Ecobank Nigeria Plc</option>
+            <option value="110">Standard Chartered Bank Nigeria Ltd</option>
+            <option value="111">Skye Bank Plc</option>
+            <option value="112">United Bank for Africa Plc</option>
+            <option value="113">Citibank Nigeria Ltd</option>
+            <option value="114">Diamond Bank Plc</option>
+            <option value="115">Sterling Bank Plc</option>
+            <option value="116">Wema Bank Plc</option>
+            <option value="117">Polaris Bank Ltd</option>
+            <option value="118">Kuda Bank</option>
+            <option value="119">Opay</option>
+            <option value="120">PalmPay</option>
+            <option value="121">Moniepoint</option>
+            <option value="122">Fidelity Bank Plc</option>
+            <option value="123">Jaiz Bank Plc</option>
+            <option value="124">VFD Microfinance Bank</option>
+            <option value="125">FSDH Merchant Bank</option>
+            <option value="126">Providus Bank</option>
+            <option value="127">SunTrust Bank Nigeria Ltd</option>
+            <option value="128">GTBank Microfinance Bank</option>
+            <option value="129">Kogi State Microfinance Bank</option>
+            <option value="130">
+              First City Monument Bank (FCMB) Microfinance
+            </option>
+            <option value="131">KeyStone Bank Ltd</option>
+            <option value="132">Aso Savings and Loans Plc</option>
+            <option value="133">Eko Bank</option>
+            <option value="134">Trust Microfinance Bank</option>
+            <option value="135">Innovative Microfinance Bank</option>
+            <option value="136">Allied Microfinance Bank</option>
+            <option value="137">Coronation Merchant Bank</option>
+            <option value="138">Mint Bank</option>
+            <option value="139">Baobab Microfinance Bank</option>
+            <option value="140">
+              Nigerian Agricultural Cooperative and Rural Development Bank
+              (NACRDB)
+            </option>
+            <option value="141">Bank of Industry (BOI)</option>
+            <option value="142">Lapo Microfinance Bank</option>
+            <option value="143">Airtel Mobile Banking</option>
+            <option value="144">Paga</option>
+            <option value="145">Zenith Bank Microfinance Bank</option>
+            <option value="146">AfriBank Nigeria Plc</option>
+            <option value="147">Mainstreet Bank Ltd</option>
+            <option value="148">MFB Lagos</option>
+            <option value="149">Brighter Microfinance Bank</option>
+            <option value="150">Access Bank Microfinance Bank</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="accountName">Account Name</label>
+          <input type="text" id="accountName" disabled />
+          <div id="verificationStatus" class="verification-status"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount (NGN)</label>
+          <input
+            type="number"
+            id="amount"
+            placeholder="Enter Amount"
+            min="100"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="narration">Narration (Optional)</label>
+          <input
+            type="text"
+            id="narration"
+            placeholder="What's this transfer for?"
+          />
+        </div>
+
+        <div class="loader" id="loader"></div>
+        <button type="button" id="proceedButton">Proceed</button>
+      </form>
+    </div>
+
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-content">
+        <img
+          id="statusIcon"
+          src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
+          alt="Status Icon"
+        />
+        <p id="confirmationMessage"></p>
+        <button id="closeSheet">Close</button>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+    <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // Monnify API configuration
+      const MONNIFY_API_KEY = "MK_TEST_N5X910LS9V";
+      const MONNIFY_SECRET_KEY = "LTF6KNFHFLQQL7XFB1L4HRUEAK4G0SGH";
+      const MONNIFY_BASE_URL = "https://sandbox.monnify.com/api/v1";
+
+      // Display loading status
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("proceedButton").disabled = true;
+      }
+
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("proceedButton").disabled = false;
+      }
+
+      // Show verification status message
+      function showVerificationStatus(element, message, status) {
+        const statusElement = document.getElementById(element);
+        statusElement.textContent = message;
+
+        // Reset all classes
+        statusElement.classList.remove(
+          "verification-pending",
+          "verification-success",
+          "verification-error"
+        );
+
+        // Add appropriate class based on status
+        statusElement.classList.add(`verification-${status}`);
+        statusElement.style.display = "block";
+      }
+
+      // Hide verification status
+      function hideVerificationStatus(element) {
+        document.getElementById(element).style.display = "none";
+      }
+
+      // Show status message in bottom sheet
+      function showStatusMessage(success, message) {
+        const bottomSheet = document.getElementById("bottomSheet");
+        const statusIcon = document.getElementById("statusIcon");
+        const confirmationMessage = document.getElementById(
+          "confirmationMessage"
+        );
+
+        // Set appropriate icon based on success/failure
+        if (success) {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/free/png-256/free-check-verified-successful-accept-tick-yes-success-2822.png?f=webp&w=256";
+        } else {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256";
+        }
+
+        confirmationMessage.innerHTML = message;
+        bottomSheet.style.bottom = "0";
+      }
+
+      // Function to get Monnify access token
+      async function getMonnifyToken() {
+        try {
+          const authHeader = btoa(`${MONNIFY_API_KEY}:${MONNIFY_SECRET_KEY}`);
+
+          const response = await fetch(`${MONNIFY_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Basic ${authHeader}`,
+            },
+          });
+
+          const data = await response.json();
+
+          if (
+            data.requestSuccessful &&
+            data.responseBody &&
+            data.responseBody.accessToken
+          ) {
+            return data.responseBody.accessToken;
+          } else {
+            console.error("Failed to get Monnify token:", data);
+            return null;
+          }
+        } catch (error) {
+          console.error("Error getting Monnify token:", error);
+          return null;
+        }
+      }
+
+      // Function to verify account number using Monnify API
+      async function verifyAccountWithMonnify(accountNumber, bankCode) {
+        try {
+          // Show pending verification status
+          showVerificationStatus(
+            "verificationStatus",
+            "Verifying account...",
+            "pending"
+          );
+
+          // Get token first
+          const token = await getMonnifyToken();
+          if (!token) {
+            showVerificationStatus(
+              "verificationStatus",
+              "Account verification service unavailable",
+              "error"
+            );
+            return null;
+          }
+
+          // Make API request to verify account
+          const response = await fetch(
+            `${MONNIFY_BASE_URL}/disbursements/account/validate?accountNumber=${accountNumber}&bankCode=${bankCode}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const data = await response.json();
+
+          if (data.requestSuccessful && data.responseBody) {
+            // Successful verification
+            showVerificationStatus(
+              "verificationStatus",
+              "Account verified",
+              "success"
+            );
+            return data.responseBody.accountName;
+          } else {
+            // Failed verification
+            showVerificationStatus(
+              "verificationStatus",
+              data.responseMessage || "Unable to verify account",
+              "error"
+            );
+            return null;
+          }
+        } catch (error) {
+          console.error("Account verification error:", error);
+          showVerificationStatus(
+            "verificationStatus",
+            "Account verification failed",
+            "error"
+          );
+          return null;
+        }
+      }
+
+      // Debounce function to prevent too many API calls
+      function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      // Function to verify account number
+      const verifyAccount = debounce(async function () {
+        const accountNumber = document.getElementById("accountNumber").value;
+        const bankCode = document.getElementById("bank").value;
+
+        // Clear the account name if either field is invalid
+        if (accountNumber.length !== 10 || !bankCode) {
+          document.getElementById("accountName").value = "";
+          hideVerificationStatus("verificationStatus");
+          return;
+        }
+
+        // When both account number is 10 digits and bank is selected, verify with API
+        const accountName = await verifyAccountWithMonnify(
+          accountNumber,
+          bankCode
+        );
+
+        if (accountName) {
+          document.getElementById("accountName").value = accountName;
+        } else {
+          document.getElementById("accountName").value = "";
+        }
+      }, 500);
+
+      // Account number validation
+      document
+        .getElementById("accountNumber")
+        .addEventListener("input", function () {
+          const accountNumber = this.value;
+
+          // Show validation status for account number
+          if (accountNumber.length > 0 && accountNumber.length < 10) {
+            showVerificationStatus(
+              "accountNumberStatus",
+              "Account number must be 10 digits",
+              "error"
+            );
+          } else if (accountNumber.length === 10) {
+            showVerificationStatus(
+              "accountNumberStatus",
+              "Valid account number format",
+              "success"
+            );
+            // If bank is already selected, verify account
+            if (document.getElementById("bank").value) {
+              verifyAccount();
+            }
+          } else {
+            hideVerificationStatus("accountNumberStatus");
+          }
+        });
+
+      // Bank selection - trigger account verification when bank is selected
+      document.getElementById("bank").addEventListener("change", function () {
+        const accountNumber = document.getElementById("accountNumber").value;
+
+        // Only verify if account number is already entered correctly
+        if (accountNumber.length === 10) {
+          verifyAccount();
+        }
+      });
+
+      // Function to handle transfer process
+      document
+        .getElementById("proceedButton")
+        .addEventListener("click", async () => {
+          const accountNumber = document.getElementById("accountNumber").value;
+          const bankCode = document.getElementById("bank").value;
+          const bankName =
+            document.getElementById("bank").options[
+              document.getElementById("bank").selectedIndex
+            ].text;
+          const accountName = document.getElementById("accountName").value;
+          const amount = parseFloat(document.getElementById("amount").value);
+          const narration =
+            document.getElementById("narration").value || "Transfer";
+
+          // Validate input fields
+          if (!accountNumber || !bankCode || !amount || !accountName) {
+            showStatusMessage(false, "Please fill out all required fields.");
+            return;
+          }
+
+          if (accountNumber.length !== 10) {
+            showStatusMessage(false, "Account number must be 10 digits.");
+            return;
+          }
+
+          if (amount < 100) {
+            showStatusMessage(false, "Minimum transfer amount is NGN 100.");
+            return;
+          }
+
+          showLoader();
+
+          try {
+            const user = auth.currentUser;
+            if (!user) {
+              hideLoader();
+              showStatusMessage(
+                false,
+                "User not logged in. Please log in to proceed."
+              );
+              setTimeout(() => {
+                window.location.href = "login.html";
+              }, 2000);
+              return;
+            }
+
+            // Fetch user balance from Firebase
+            const userRef = database.ref("users/" + user.uid);
+            const snapshot = await userRef.once("value");
+            const userData = snapshot.val();
+
+            if (!userData || userData.balance < amount) {
+              hideLoader();
+              showStatusMessage(
+                false,
+                `Your transfer to ${accountName} failed due to insufficient balance. Please fund your account and try again.`
+              );
+              return;
+            }
+
+            // Generate transaction ID
+            const transactionId = "TRF" + Date.now().toString().substring(5);
+
+            // Transaction timestamp
+            const timestamp = firebase.database.ServerValue.TIMESTAMP;
+
+            // Create transaction object
+            const transaction = {
+              type: "transfer",
+              transactionId: transactionId,
+              sender: {
+                userId: user.uid,
+                name: userData.fullName || "User",
+                phone: userData.phone || "",
+              },
+              recipient: {
+                accountName: accountName,
+                accountNumber: accountNumber,
+                bankCode: bankCode,
+                bankName: bankName,
+              },
+              amount: amount,
+              narration: narration,
+              status: "success",
+              timestamp: timestamp,
+              formattedDate: new Date().toLocaleString(),
+            };
+
+            // Update user balance
+            const newBalance = userData.balance - amount;
+            await userRef.update({ balance: newBalance });
+
+            // Add to user's transaction history
+            await database
+              .ref(`users/${user.uid}/transactions/${transactionId}`)
+              .set(transaction);
+
+            // Add to global transactions collection
+            await database
+              .ref(`transactions/${transactionId}`)
+              .set(transaction);
+
+            hideLoader();
+            showStatusMessage(
+              true,
+              `Your transfer of NGN ${amount.toLocaleString()} to ${accountName} was successful.`
+            );
+
+            // Redirect to transaction history page after 2 seconds
+            setTimeout(() => {
+              window.location.href = "history.html";
+            }, 2000);
+          } catch (error) {
+            hideLoader();
+            console.error("Transfer error:", error);
+            showStatusMessage(
+              false,
+              "An error occurred while processing your transfer. Please try again later."
+            );
+          }
+        });
+
+      // Close the bottom sheet
+      document.getElementById("closeSheet").addEventListener("click", () => {
+        document.getElementById("bottomSheet").style.bottom = "-100%";
+      });
+
+      // Check if user is logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
+      });
+    </script>
+  </body>
+</html>

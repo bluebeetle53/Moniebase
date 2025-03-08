@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Topup</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="data.css" />
+  </head>
+  <body>
+    <header>
+      <i
+        class="fas fa-arrow-left"
+        onclick="window.location.href='home.html';"
+      ></i>
+      <h1>Buy Data</h1>
+    </header>
+
+    <div class="container">
+      <form id="dataForm">
+        <div class="network-selection">
+          <h2>Select Network Provider</h2>
+          <div class="network-options">
+            <div class="network-option" data-network="MTN">
+              <img
+                src="https://images.seeklogo.com/logo-png/9/1/mtn-logo-png_seeklogo-95716.png"
+                alt="MTN Logo"
+                class="network-logo"
+              />
+              <span>MTN</span>
+            </div>
+            <div class="network-option" data-network="AIRTEL">
+              <img
+                src="https://images.seeklogo.com/logo-png/30/2/airtel-logo-png_seeklogo-305383.png?v=1956419321561541848"
+                alt="Airtel Logo"
+                class="network-logo"
+              />
+              <span>Airtel</span>
+            </div>
+            <div class="network-option" data-network="GLO">
+              <img
+                src="https://images.seeklogo.com/logo-png/49/2/glo-limited-logo-png_seeklogo-491131.png"
+                alt="Glo Logo"
+                class="network-logo"
+              />
+              <span>Glo</span>
+            </div>
+            <div class="network-option" data-network="9MOBILE">
+              <img
+                src="https://images.seeklogo.com/logo-png/48/2/9mobile-logo-png_seeklogo-481168.png"
+                alt="9Mobile Logo"
+                class="network-logo"
+              />
+              <span>9Mobile</span>
+            </div>
+          </div>
+          <input type="hidden" id="network" name="network" />
+        </div>
+
+        <div class="form-group">
+          <label for="plan-type">Select Plan Type</label>
+          <div class="plan-type-selector">
+            <div class="plan-type active" data-type="SME">SME Data</div>
+            <div class="plan-type" data-type="CORPORATE">Corporate Data</div>
+          </div>
+          <input type="hidden" id="plan-type" name="plan-type" value="SME" />
+        </div>
+
+        <div class="form-group">
+          <label for="data-plan">Select Data Plan</label>
+          <select id="data-plan">
+            <option value="" disabled selected>Select Data Plan</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <div class="phone-container">
+            <input
+              type="text"
+              id="phone"
+              placeholder="Enter phone number"
+              maxlength="11"
+            />
+            <button type="button" id="select-contact">
+              <i class="fas fa-address-book"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <div class="amount-display">
+            <span class="currency">₦</span>
+            <input
+              type="text"
+              id="amount"
+              placeholder="Amount for selected plan"
+              disabled
+            />
+          </div>
+        </div>
+
+        <div class="loader" id="loader"></div>
+        <button type="button" id="buyData">Buy Data</button>
+      </form>
+    </div>
+
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-content">
+        <img
+          id="statusIcon"
+          src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
+          alt="Status Icon"
+        />
+        <p id="confirmationMessage"></p>
+        <button id="closeSheet">Close</button>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+    <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // Data plans categorized by network and plan type
+      const dataPlans = {
+        MTN: {
+          SME: [
+            { plan: "1GB", price: 250, validity: "30 Days" },
+            { plan: "2GB", price: 500, validity: "30 Days" },
+            { plan: "3GB", price: 750, validity: "30 Days" },
+            { plan: "5GB", price: 1250, validity: "30 Days" },
+            { plan: "10GB", price: 2500, validity: "30 Days" },
+          ],
+          CORPORATE: [
+            { plan: "1GB", price: 400, validity: "30 Days" },
+            { plan: "2GB", price: 650, validity: "30 Days" },
+            { plan: "3GB", price: 900, validity: "30 Days" },
+            { plan: "5GB", price: 1400, validity: "30 Days" },
+            { plan: "10GB", price: 2650, validity: "30 Days" },
+          ],
+        },
+        AIRTEL: {
+          SME: [
+            { plan: "1GB", price: 400, validity: "30 Days" },
+            { plan: "2GB", price: 800, validity: "30 Days" },
+            { plan: "3GB", price: 1200, validity: "30 Days" },
+            { plan: "5GB", price: 2000, validity: "30 Days" },
+            { plan: "10GB", price: 4000, validity: "30 Days" },
+          ],
+          CORPORATE: [
+            { plan: "1GB", price: 550, validity: "30 Days" },
+            { plan: "2GB", price: 950, validity: "30 Days" },
+            { plan: "3GB", price: 1350, validity: "30 Days" },
+            { plan: "5GB", price: 2150, validity: "30 Days" },
+            { plan: "10GB", price: 4150, validity: "30 Days" },
+          ],
+        },
+        GLO: {
+          SME: [
+            { plan: "200MB", price: 60, validity: "30 Days" },
+            { plan: "1GB", price: 250, validity: "30 Days" },
+            { plan: "2GB", price: 500, validity: "30 Days" },
+            { plan: "5GB", price: 1250, validity: "30 Days" },
+            { plan: "10GB", price: 2500, validity: "30 Days" },
+          ],
+          CORPORATE: [
+            { plan: "200MB", price: 210, validity: "30 Days" },
+            { plan: "1GB", price: 400, validity: "30 Days" },
+            { plan: "2GB", price: 650, validity: "30 Days" },
+            { plan: "5GB", price: 1400, validity: "30 Days" },
+            { plan: "10GB", price: 2650, validity: "30 Days" },
+          ],
+        },
+        "9MOBILE": {
+          SME: [
+            { plan: "1GB", price: 150, validity: "30 Days" },
+            { plan: "2GB", price: 300, validity: "30 Days" },
+            { plan: "4GB", price: 600, validity: "30 Days" },
+            { plan: "5GB", price: 750, validity: "30 Days" },
+            { plan: "10GB", price: 1800, validity: "30 Days" },
+          ],
+          CORPORATE: [
+            { plan: "1GB", price: 300, validity: "30 Days" },
+            { plan: "2GB", price: 450, validity: "30 Days" },
+            { plan: "4GB", price: 750, validity: "30 Days" },
+            { plan: "5GB", price: 900, validity: "30 Days" },
+            { plan: "10GB", price: 1950, validity: "30 Days" },
+          ],
+        },
+      };
+
+      // Display loading status
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("buyData").disabled = true;
+      }
+
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("buyData").disabled = false;
+      }
+
+      // Show status message in bottom sheet with specific transaction details
+      function showStatusMessage(success, message, transactionDetails = null) {
+        const bottomSheet = document.getElementById("bottomSheet");
+        const statusIcon = document.getElementById("statusIcon");
+        const confirmationMessage = document.getElementById(
+          "confirmationMessage"
+        );
+
+        // Set appropriate icon based on success/failure
+        if (success) {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/free/png-256/free-check-verified-successful-accept-tick-yes-success-2822.png?f=webp&w=256";
+
+          // For successful transactions, format a detailed message
+          if (transactionDetails) {
+            const {
+              network,
+              planType,
+              dataPlan,
+              phoneNumber,
+              amount,
+              transactionId,
+              timestamp,
+              validity,
+            } = transactionDetails;
+
+            // Format date and time
+            const date = new Date(timestamp);
+            const formattedDate = date.toLocaleDateString();
+            const formattedTime = date.toLocaleTimeString();
+
+            message = `
+              <div class="transaction-details">
+                <p class="success-header">Data Purchase Successful!</p>
+                <div class="detail-item">
+                  <span class="detail-label">Bundle:</span>
+                  <span class="detail-value">${network} ${dataPlan} (${planType})</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Validity:</span>
+                  <span class="detail-value">${validity}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Phone Number:</span>
+                  <span class="detail-value">${phoneNumber}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Amount:</span>
+                  <span class="detail-value">₦${amount}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Date:</span>
+                  <span class="detail-value">${formattedDate}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Time:</span>
+                  <span class="detail-value">${formattedTime}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Reference ID:</span>
+                  <span class="detail-value">${transactionId}</span>
+                </div>
+              </div>
+            `;
+          }
+        } else {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256";
+        }
+
+        confirmationMessage.innerHTML = message;
+        bottomSheet.style.bottom = "0";
+      }
+
+      // Function to update data plans when network or plan type changes
+      function updateDataPlans() {
+        const network = document.getElementById("network").value;
+        const planType = document.getElementById("plan-type").value;
+        const dataPlanSelect = document.getElementById("data-plan");
+
+        dataPlanSelect.innerHTML =
+          '<option value="" disabled selected>Select Data Plan</option>';
+
+        if (
+          network &&
+          planType &&
+          dataPlans[network] &&
+          dataPlans[network][planType]
+        ) {
+          dataPlans[network][planType].forEach((plan) => {
+            const option = document.createElement("option");
+            option.value = plan.price;
+            option.textContent = `${plan.plan} - ₦${plan.price} (${plan.validity})`;
+            option.dataset.plan = plan.plan;
+            option.dataset.validity = plan.validity;
+            dataPlanSelect.appendChild(option);
+          });
+        }
+      }
+
+      // Network selection functionality
+      document.querySelectorAll(".network-option").forEach((option) => {
+        option.addEventListener("click", function () {
+          // Remove active class from all options
+          document.querySelectorAll(".network-option").forEach((opt) => {
+            opt.classList.remove("active");
+          });
+
+          // Add active class to selected option
+          this.classList.add("active");
+
+          // Set the selected network value
+          const selectedNetwork = this.getAttribute("data-network");
+          document.getElementById("network").value = selectedNetwork;
+
+          // Update data plans
+          updateDataPlans();
+        });
+      });
+
+      // Plan type selection functionality
+      document.querySelectorAll(".plan-type").forEach((option) => {
+        option.addEventListener("click", function () {
+          // Remove active class from all options
+          document.querySelectorAll(".plan-type").forEach((opt) => {
+            opt.classList.remove("active");
+          });
+
+          // Add active class to selected option
+          this.classList.add("active");
+
+          // Set the selected plan type value
+          const selectedPlanType = this.getAttribute("data-type");
+          document.getElementById("plan-type").value = selectedPlanType;
+
+          // Update data plans
+          updateDataPlans();
+        });
+      });
+
+      // Update the amount field when a data plan is selected
+      document
+        .getElementById("data-plan")
+        .addEventListener("change", function () {
+          const selectedAmount = this.value;
+          document.getElementById("amount").value = selectedAmount;
+        });
+
+      // Handle the data purchase
+      document.getElementById("buyData").addEventListener("click", async () => {
+        const network = document.getElementById("network").value;
+        const planType = document.getElementById("plan-type").value;
+        const dataPlanSelect = document.getElementById("data-plan");
+        const amount = parseFloat(dataPlanSelect.value);
+        const dataPlan =
+          dataPlanSelect.options[dataPlanSelect.selectedIndex]?.dataset.plan;
+        const validity =
+          dataPlanSelect.options[dataPlanSelect.selectedIndex]?.dataset
+            .validity;
+        const phoneNumber = document.getElementById("phone").value;
+
+        // Validate input fields
+        if (!network || !planType || !amount || !phoneNumber) {
+          showStatusMessage(false, "Please fill out all required fields.");
+          return;
+        }
+
+        // Validate phone number format (should be 11 digits)
+        if (phoneNumber.length !== 11 || !/^\d+$/.test(phoneNumber)) {
+          showStatusMessage(
+            false,
+            "Please enter a valid 11-digit phone number."
+          );
+          return;
+        }
+
+        showLoader();
+
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            hideLoader();
+            showStatusMessage(
+              false,
+              "User not logged in. Please log in to proceed."
+            );
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 2000);
+            return;
+          }
+
+          // Fetch user balance from Firebase
+          const userRef = database.ref("users/" + user.uid);
+          const snapshot = await userRef.once("value");
+          const userData = snapshot.val();
+
+          if (!userData || userData.balance < amount) {
+            hideLoader();
+            showStatusMessage(
+              false,
+              `Your data purchase failed due to insufficient balance. Please fund your account and try again.`
+            );
+            return;
+          }
+
+          // Generate transaction ID
+          const transactionId = "DATA" + Date.now().toString().substring(5);
+
+          // Transaction timestamp
+          const timestamp = firebase.database.ServerValue.TIMESTAMP;
+
+          // Create transaction object
+          const transaction = {
+            type: "data",
+            transactionId: transactionId,
+            user: {
+              userId: user.uid,
+              name: userData.fullName || "User",
+              phone: userData.phone || "",
+            },
+            details: {
+              network: network,
+              planType: planType,
+              dataPlan: dataPlan,
+              validity: validity,
+              phoneNumber: phoneNumber,
+            },
+            amount: amount,
+            status: "success",
+            timestamp: timestamp,
+            formattedDate: new Date().toLocaleString(),
+          };
+
+          // Update user balance
+          const newBalance = userData.balance - amount;
+          await userRef.update({ balance: newBalance });
+
+          // Add to user's transaction history
+          await database
+            .ref(`users/${user.uid}/transactions/${transactionId}`)
+            .set(transaction);
+
+          // Add to global transactions collection
+          await database.ref(`transactions/${transactionId}`).set(transaction);
+
+          hideLoader();
+
+          // Create transaction details object for specific success message
+          const transactionDetails = {
+            network: network,
+            planType: planType,
+            dataPlan: dataPlan,
+            validity: validity,
+            phoneNumber: phoneNumber,
+            amount: amount,
+            transactionId: transactionId,
+            timestamp: Date.now(), // Using client time since server timestamp isn't available yet
+          };
+
+          // Show detailed success message
+          showStatusMessage(
+            true,
+            "", // Empty message will be replaced with formatted details
+            transactionDetails
+          );
+
+          // Reset form
+          document.getElementById("dataForm").reset();
+          document.getElementById("amount").value = "";
+          document.querySelectorAll(".network-option").forEach((opt) => {
+            opt.classList.remove("active");
+          });
+          document
+            .querySelector('.plan-type[data-type="SME"]')
+            .classList.add("active");
+          document
+            .querySelector('.plan-type[data-type="CORPORATE"]')
+            .classList.remove("active");
+          document.getElementById("plan-type").value = "SME";
+
+          // Redirect to transaction history page after 5 seconds
+          setTimeout(() => {
+            window.location.href = "history.html";
+          }, 10000);
+        } catch (error) {
+          hideLoader();
+          console.error("Data purchase error:", error);
+          showStatusMessage(
+            false,
+            "An error occurred while processing your data purchase. Please try again later."
+          );
+        }
+      });
+
+      // Contact selection button
+      document
+        .getElementById("select-contact")
+        .addEventListener("click", () => {
+          // This would typically open a device contact picker
+          // For now, just show a message
+          alert("Contact selection feature will be implemented soon");
+        });
+
+      // Close the bottom sheet
+      document.getElementById("closeSheet").addEventListener("click", () => {
+        document.getElementById("bottomSheet").style.bottom = "-100%";
+      });
+
+      // Check if user is logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
+      });
+    </script>
+  </body>
+</html>

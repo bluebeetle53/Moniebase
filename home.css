@@ -1,0 +1,481 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #ffff;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 10px 20px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-text {
+  font-size: 16px;
+  color: #333;
+}
+
+.right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.notification-icon {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 10px;
+  }
+
+  .profile-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .user-text {
+    font-size: 14px;
+  }
+
+  .notification-icon {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.card {
+  background: #2f4f7f;
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  color: white;
+  margin: 20px auto;
+}
+
+.total-balance {
+  margin-bottom: 10px;
+}
+
+.total-balance span {
+  font-size: 18px;
+}
+
+.balance {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.balance span {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.chip {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 10px;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  margin: 15px 0;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.option img {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.option span {
+  font-size: 14px;
+  color: white;
+}
+
+/* Transaction History Container */
+.transaction-history-container {
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.history-header h2 {
+  font-size: 18px;
+  color: #333;
+}
+
+.see-more {
+  color: #2f4f7f;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Transaction List Styling */
+.transaction {
+  background-color: #f9f9f9;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.transaction:active {
+  transform: scale(0.98);
+}
+
+.transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.transaction-details {
+  display: flex;
+  align-items: center;
+}
+
+.transaction-icon {
+  width: 36px;
+  height: 36px;
+  background-color: #f0f6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.transaction-icon i {
+  color: #2f4f7f;
+  font-size: 16px;
+}
+
+.transaction-info {
+  flex-grow: 1;
+}
+
+.transaction-info p {
+  margin: 2px 0;
+  font-size: 14px;
+}
+
+.transaction-info .date {
+  color: #888;
+  font-size: 12px;
+}
+
+.transaction-amount {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.credit {
+  color: #28a745;
+}
+
+.debit {
+  color: #dc3545;
+}
+
+.status {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-success {
+  background-color: #e6f7ee;
+  color: #28a745;
+}
+
+.status-pending {
+  background-color: #fff8e6;
+  color: #ffc107;
+}
+
+.status-failed {
+  background-color: #feebeb;
+  color: #dc3545;
+}
+
+#no-transactions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  text-align: center;
+}
+
+#no-transactions img {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+#no-transactions p {
+  font-size: 15px;
+  color: #888;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.nav-item {
+  text-align: center;
+  padding: 5px 10px;
+}
+
+.nav-item img {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.nav-item span {
+  font-size: 14px;
+  color: #555;
+}
+
+.nav-item:hover {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.nav-item:hover span {
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  z-index: 9999;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Dialog Box Styling */
+.dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 25px;
+  width: 350px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2f4f7f;
+}
+
+.dialog-content {
+  display: flex;
+  justify-content: space-around;
+}
+
+/* Service items styling */
+.service-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.service-item:hover {
+  background-color: #f5f7fa;
+}
+
+.service-item i {
+  font-size: 32px;
+  color: #2f4f7f;
+  margin-bottom: 12px;
+}
+
+.service-item span {
+  font-size: 16px;
+  color: #444;
+}
+
+/* Close Button */
+.close-btn {
+  cursor: pointer;
+  font-size: 22px;
+  color: #777;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Toast Notification */
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 12px 20px;
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+/* Dialog Animation */
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -70%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+/* Overlay behind dialog */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}

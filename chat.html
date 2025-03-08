@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Chat with Moniebase support team for assistance"
+    />
+    <title>Moniebase Chat</title>
+    <link
+      rel="icon"
+      href="https://cdn-icons-png.flaticon.com/128/3670/3670051.png"
+      type="image/png"
+    />
+    <meta property="og:title" content="Moniebase Support Chat" />
+    <meta
+      property="og:description"
+      content="Get help from our support team instantly"
+    />
+    <meta name="twitter:url" content="https://moniebase.com" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #128c7e;
+        --primary-dark: #075e54;
+        --primary-light: #25d366;
+        --secondary: #34b7f1;
+        --light-bg: #f6f6f6;
+        --chat-bg: #e5ddd5;
+        --sent-bg: #dcf8c6;
+        --received-bg: #ffffff;
+        --text-dark: #303030;
+        --text-light: #727272;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: linear-gradient(
+          to bottom,
+          var(--primary-dark),
+          var(--primary)
+        );
+      }
+
+      .app-container {
+        position: relative;
+        width: 100%;
+        max-width: 450px;
+        height: 100vh;
+        max-height: 800px;
+        background-color: white;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Chat Header */
+      .chat-header {
+        background-color: var(--primary-dark);
+        color: white;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        z-index: 10;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        flex: 1;
+      }
+
+      .profile-picture {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+      }
+
+      .profile-picture img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .chat-details h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+      }
+
+      .verified-badge {
+        width: 16px;
+        height: 16px;
+        margin-left: 6px;
+      }
+
+      .chat-details p {
+        font-size: 13px;
+        opacity: 0.8;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 16px;
+      }
+
+      .header-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Chat Box */
+      .chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        background-color: var(--chat-bg);
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23075e54' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message {
+        max-width: 75%;
+        margin-bottom: 12px;
+        position: relative;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .message-content {
+        padding: 8px 12px;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .message-time {
+        font-size: 11px;
+        color: var(--text-light);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .message.received .message-time {
+        justify-content: flex-start;
+      }
+
+      .sent {
+        align-self: flex-end;
+      }
+
+      .sent .message-content {
+        background-color: var(--sent-bg);
+        border-top-right-radius: 2px;
+      }
+
+      .received {
+        align-self: flex-start;
+      }
+
+      .received .message-content {
+        background-color: var(--received-bg);
+        border-top-left-radius: 2px;
+      }
+
+      /* Double tick for read messages */
+      .read-status {
+        margin-left: 4px;
+        font-size: 11px;
+        color: #4fc3f7;
+      }
+
+      /* Chat Input */
+      .chat-input-container {
+        background-color: #f0f0f0;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .input-wrapper {
+        flex: 1;
+        background-color: white;
+        border-radius: 20px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        margin: 0 8px;
+      }
+
+      .input-action {
+        color: var(--text-light);
+        font-size: 18px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+
+      .input-action:hover {
+        color: var(--primary);
+      }
+
+      #message {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 10px 8px;
+        font-size: 15px;
+        background: transparent;
+      }
+
+      .send-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .send-btn:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Phone Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-content {
+        background-color: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 350px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        animation: slideUp 0.3s ease;
+      }
+
+      .modal-logo {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+      }
+
+      .modal-title {
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        font-size: 20px;
+      }
+
+      .modal-subtitle {
+        color: var(--text-light);
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+
+      .input-field {
+        background-color: var(--light-bg);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        width: 100%;
+        font-size: 15px;
+        transition: border-color 0.2s;
+      }
+
+      .input-field:focus {
+        border-color: var(--primary);
+        outline: none;
+      }
+
+      .modal-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .modal-btn:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Logout Button */
+      .logout-fab {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #ff5252;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        z-index: 90;
+        transition: all 0.2s;
+      }
+
+      .logout-fab:hover {
+        background-color: #ff1744;
+        transform: scale(1.05);
+      }
+
+      /* Empty State */
+      .empty-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        color: var(--text-light);
+        text-align: center;
+      }
+
+      .empty-state img {
+        width: 120px;
+        margin-bottom: 20px;
+        opacity: 0.7;
+      }
+
+      /* Welcome Message */
+      .welcome-message {
+        color: var(--text-light);
+        text-align: center;
+        padding: 16px;
+        font-size: 13px;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.6);
+        margin: 0 auto 16px;
+        max-width: 80%;
+      }
+
+      /* Typing indicator */
+      .typing-indicator {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .typing-indicator.active {
+        opacity: 1;
+      }
+
+      .typing-bubble {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 12px 16px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--text-light);
+        border-radius: 50%;
+        margin: 0 2px;
+        animation: typingBounce 1.5s infinite;
+      }
+
+      .dot:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+
+      .dot:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes typingBounce {
+        0%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-5px);
+        }
+      }
+
+      /* Responsive adjustments */
+      @media (max-height: 700px) {
+        .chat-box {
+          height: 60vh;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .chat-details h3 {
+          font-size: 14px;
+        }
+
+        .chat-details p {
+          font-size: 12px;
+        }
+
+        .message-content {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Phone Number Modal -->
+    <div class="modal" id="phoneModal">
+      <div class="modal-content">
+        <img
+          src="https://cdn-icons-png.flaticon.com/128/3670/3670051.png"
+          alt="Moniebase Logo"
+          class="modal-logo"
+        />
+        <h2 class="modal-title">Welcome to Moniebase</h2>
+        <p class="modal-subtitle">Enter your phone number to continue</p>
+        <input
+          type="text"
+          id="phoneInput"
+          class="input-field"
+          placeholder="e.g. 090123456789"
+          pattern="[0-9]+"
+          maxlength="15"
+        />
+        <button id="continueBtn" class="modal-btn">Continue</button>
+      </div>
+    </div>
+
+    <div class="app-container">
+      <div class="chat-header">
+        <div class="header-left">
+          <div class="profile-picture">
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+              alt="Moniebase"
+            />
+          </div>
+          <div class="chat-details">
+            <h3>
+              Moniebase
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/9195/9195920.png"
+                alt="Verified"
+                class="verified-badge"
+              />
+            </h3>
+            <p>Online</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="header-btn">
+            <i class="fas fa-phone"></i>
+          </button>
+          <button class="header-btn">
+            <i class="fas fa-video"></i>
+          </button>
+          <button class="header-btn">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-box" id="chat-box">
+        <!-- Messages will be loaded here -->
+        <div class="welcome-message">
+          Welcome to Moniebase support. How can we help you today?
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator">
+          <div class="typing-bubble">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-container">
+        <div class="input-action">
+          <i class="far fa-smile"></i>
+        </div>
+        <div class="input-action">
+          <i class="fas fa-paperclip"></i>
+        </div>
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="message"
+            placeholder="Type a message..."
+            autocomplete="off"
+          />
+        </div>
+        <button class="send-btn" id="sendBtn">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Logout Button -->
+    <div class="logout-fab" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+
+    <script>
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+
+      // DOM Elements
+      const chatBox = document.getElementById("chat-box");
+      const messageInput = document.getElementById("message");
+      const sendBtn = document.getElementById("sendBtn");
+      const phoneModal = document.getElementById("phoneModal");
+      const phoneInput = document.getElementById("phoneInput");
+      const continueBtn = document.getElementById("continueBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const typingIndicator = document.getElementById("typing-indicator");
+
+      // User data
+      let userPhone = localStorage.getItem("userPhone");
+
+      // Show phone modal if user is not logged in
+      if (!userPhone) {
+        phoneModal.style.display = "flex";
+      } else {
+        // Load user's messages
+        loadMessages();
+
+        // Show welcome message if this is a new conversation
+        checkForExistingConversation();
+      }
+
+      // Submit phone number
+      continueBtn.addEventListener("click", submitPhoneNumber);
+      phoneInput.addEventListener("keyup", function (event) {
+        // Allow only numbers
+        this.value = this.value.replace(/[^0-9]/g, "");
+
+        // Submit on Enter key
+        if (event.key === "Enter") {
+          submitPhoneNumber();
+        }
+      });
+
+      function submitPhoneNumber() {
+        const phoneNumber = phoneInput.value.trim();
+
+        if (phoneNumber === "") {
+          shakeElement(phoneInput);
+          return;
+        }
+
+        // Validate phone number (basic validation)
+        if (phoneNumber.length < 10) {
+          shakeElement(phoneInput);
+          return;
+        }
+
+        // Save user phone number (replace '+' with '_' for Firebase path)
+        userPhone = phoneNumber.replace(/\+/g, "_");
+        localStorage.setItem("userPhone", userPhone);
+
+        // Close modal with animation
+        phoneModal.style.opacity = "0";
+        setTimeout(() => {
+          phoneModal.style.display = "none";
+          phoneModal.style.opacity = "1";
+        }, 300);
+
+        // Load messages
+        loadMessages();
+
+        // Show automated welcome message if this is a new conversation
+        checkForExistingConversation();
+      }
+
+      function checkForExistingConversation() {
+        database.ref("messages/" + userPhone).once("value", (snapshot) => {
+          if (!snapshot.exists()) {
+            // This is a new conversation, show automated welcome message
+            setTimeout(() => {
+              showTypingIndicator();
+
+              setTimeout(() => {
+                hideTypingIndicator();
+
+                // Send welcome message from admin
+                database.ref("messages/" + userPhone).push({
+                  sender: "Admin",
+                  text: "Hello! Welcome to Moniebase support. How can I help you today?",
+                  timestamp: Date.now(),
+                });
+              }, 2000);
+            }, 1000);
+          }
+        });
+      }
+
+      // Send message
+      sendBtn.addEventListener("click", sendMessage);
+      messageInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
+      });
+
+      function sendMessage() {
+        const message = messageInput.value.trim();
+
+        if (message === "") return;
+
+        // Create message data
+        const messageData = {
+          sender: userPhone,
+          text: message,
+          timestamp: Date.now(),
+        };
+
+        // Clear input field immediately for better UX
+        messageInput.value = "";
+
+        // Send message to database
+        database
+          .ref("messages/" + userPhone)
+          .push(messageData)
+          .then(() => {
+            // Scroll to bottom
+            scrollToBottom();
+
+            // Simulate typing response after user message
+            simulateAdminResponse();
+          })
+          .catch((error) => {
+            console.error("Error sending message: ", error);
+
+            // Show error in chat
+            appendMessage({
+              text: "Failed to send message. Please try again.",
+              timestamp: Date.now(),
+              error: true,
+            });
+          });
+      }
+
+      // Load messages
+      function loadMessages() {
+        database.ref("messages/" + userPhone).on("child_added", (snapshot) => {
+          const data = snapshot.val();
+          appendMessage(data);
+
+          // Scroll to bottom
+          scrollToBottom();
+        });
+      }
+
+      // Append message to chat box
+      function appendMessage(data) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${
+          data.sender === userPhone ? "sent" : "received"
+        }`;
+
+        if (data.error) {
+          messageDiv.classList.add("error");
+        }
+
+        // Format timestamp
+        const messageDate = new Date(data.timestamp);
+        const formattedTime = messageDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        messageDiv.innerHTML = `
+          <div class="message-content">${data.text}</div>
+          <div class="message-time">
+            ${formattedTime}
+            ${
+              data.sender === userPhone
+                ? '<span class="read-status"><i class="fas fa-check-double"></i></span>'
+                : ""
+            }
+          </div>
+        `;
+
+        // Insert before typing indicator
+        chatBox.insertBefore(messageDiv, typingIndicator);
+      }
+
+      // Show typing indicator
+      function showTypingIndicator() {
+        typingIndicator.classList.add("active");
+        scrollToBottom();
+      }
+
+      // Hide typing indicator
+      function hideTypingIndicator() {
+        typingIndicator.classList.remove("active");
+      }
+
+      // Scroll to bottom of chat
+      function scrollToBottom() {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      // Simulate admin response
+      function simulateAdminResponse() {
+        // Only simulate responses during business hours for realism
+        const now = new Date();
+        const hours = now.getHours();
+        const isBusinessHours = hours >= 8 && hours < 20;
+
+        if (isBusinessHours) {
+          // Show typing indicator after a short delay
+          setTimeout(() => {
+            showTypingIndicator();
+
+            // Hide typing and send response after a variable delay
+            const typingTime = Math.random() * 2000 + 1000; // Between 1-3 seconds
+            setTimeout(() => {
+              hideTypingIndicator();
+
+              // Get automated responses from database or use default
+              const responses = [
+                "Thank you for your message. An agent will respond shortly.",
+                "Your message has been received. We'll get back to you as soon as possible.",
+                "Thanks for contacting Moniebase support. How else can we assist you today?",
+                "We've received your inquiry and are looking into it. Is there anything else you'd like to know?",
+              ];
+
+              // Send random response
+              const randomResponse =
+                responses[Math.floor(Math.random() * responses.length)];
+
+              database.ref("messages/" + userPhone).push({
+                sender: "Admin",
+                text: randomResponse,
+                timestamp: Date.now(),
+              });
+            }, typingTime);
+          }, 500);
+        }
+      }
+
+      // Logout functionality
+      logoutBtn.addEventListener("click", logout);
+
+      function logout() {
+        // Confirm before logout
+        if (confirm("Are you sure you want to log out?")) {
+          localStorage.removeItem("userPhone");
+          location.reload();
+        }
+      }
+
+      // Helper function to shake an element (for validation errors)
+      function shakeElement(element) {
+        element.style.animation = "none";
+        setTimeout(() => {
+          element.style.animation = "shake 0.5s";
+        }, 10);
+      }
+
+      // Add shake animation
+      document.head.insertAdjacentHTML(
+        "beforeend",
+        `
+        <style>
+          @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+          }
+        </style>
+      `
+      );
+    </script>
+  </body>
+</html>

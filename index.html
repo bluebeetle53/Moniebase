@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moniebase - Seamless Financial Transactions in Nigeria</title>
+    <meta
+      name="description"
+      content="Moniebase: Your trusted platform for easy, secure, and affordable financial transactions across Nigeria."
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        line-height: 1.6;
+        color: #333;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin-bottom: 1rem;
+        line-height: 1.2;
+      }
+
+      h2 {
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+        color: #2f4f7f;
+      }
+
+      h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background-color: #4caf50;
+        border-radius: 3px;
+      }
+
+      p {
+        margin-bottom: 1rem;
+      }
+
+      section {
+        padding: 5rem 2rem;
+      }
+
+      /* Header Styles */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+
+      header.scrolled {
+        background-color: #2f4f7f;
+      }
+
+      header.scrolled .logo {
+        color: white;
+      }
+
+      header.scrolled .drawer-icon i {
+        color: white;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2f4f7f;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .logo::before {
+        content: "";
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background-color: #4caf50;
+        border-radius: 50%;
+        margin-right: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover::before {
+        transform: scale(1.2);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links li {
+        list-style: none;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        position: relative;
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #4caf50;
+        transition: width 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: #4caf50;
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .drawer-icon {
+        display: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #2f4f7f;
+        transition: color 0.3s ease;
+      }
+
+      .drawer-icon:hover {
+        color: #4caf50;
+      }
+
+      /* Mobile Navigation */
+      .drawer {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 300px;
+        height: 100vh;
+        background-color: #2f4f7f;
+        z-index: 1001;
+        padding: 2rem;
+        transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .drawer.open {
+        right: 0;
+      }
+
+      .drawer ul {
+        list-style: none;
+        margin-top: 2rem;
+      }
+
+      .drawer ul li {
+        margin-bottom: 1.5rem;
+        padding: 0.8rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .drawer ul li:hover,
+      .drawer ul li.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(10px);
+      }
+
+      .drawer-footer {
+        display: flex;
+        align-items: center;
+        color: white;
+        margin-top: auto;
+      }
+
+      .drawer-footer img {
+        width: 40px;
+        height: 40px;
+        margin-right: 1rem;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #2f4f7f 0%, #3a6491 100%);
+        color: white;
+        text-align: center;
+        padding: 7rem 2rem 5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        left: -50px;
+        width: 200px;
+        height: 200px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 15s infinite linear;
+      }
+
+      .hero-section::after {
+        content: "";
+        position: absolute;
+        bottom: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        animation: float 20s infinite linear reverse;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+          transform: translate(100px, 100px) rotate(180deg);
+        }
+        100% {
+          transform: translate(0, 0) rotate(360deg);
+        }
+      }
+
+      .hero-content {
+        max-width: 800px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-content h1 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 1s ease-out;
+      }
+
+      .hero-content p {
+        font-size: clamp(1.1rem, 2vw, 1.5rem);
+        margin-bottom: 2.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        animation: fadeInUp 1s ease-out 0.2s forwards;
+        opacity: 0;
+      }
+
+      .hero-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        animation: fadeInUp 1s ease-out 0.4s forwards;
+        opacity: 0;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .btn {
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-width: 160px;
+      }
+
+      .btn-primary {
+        background-color: #4caf50;
+        color: white;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .btn-primary:hover {
+        background-color: #3d9c41;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+      }
+
+      .btn-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-3px);
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      /* How It Works Section */
+      .how-it-works {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .steps-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .step {
+        background-color: white;
+        padding: 2.5rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .step::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        background-color: #f8f9fa;
+        z-index: -1;
+        transition: height 0.4s ease;
+      }
+
+      .step:hover {
+        transform: translateY(-15px);
+      }
+
+      .step:hover::before {
+        height: 100%;
+      }
+
+      .step i {
+        font-size: 3rem;
+        color: #4caf50;
+        margin-bottom: 1.5rem;
+        transition: transform 0.4s ease;
+      }
+
+      .step:hover i {
+        transform: scale(1.2);
+      }
+
+      .step h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #2f4f7f;
+      }
+
+      /* Features Section */
+      .features {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        background-color: #f8f9fa;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .feature {
+        background-color: white;
+        padding: 2.5rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #2f4f7f, #4caf50);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+      }
+
+      .feature:hover {
+        transform: translateY(-15px);
+      }
+
+      .feature:hover::after {
+        transform: scaleX(1);
+      }
+
+      .feature i {
+        font-size: 3rem;
+        color: #2f4f7f;
+        margin-bottom: 1.5rem;
+        transition: all 0.4s ease;
+      }
+
+      .feature:hover i {
+        color: #4caf50;
+        transform: rotateY(360deg);
+      }
+
+      .feature h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #2f4f7f;
+      }
+
+      /* Testimonials Section */
+      .testimonials {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .testimonial-carousel {
+        position: relative;
+        margin-top: 3rem;
+        overflow: hidden;
+      }
+
+      .testimonial-container {
+        display: flex;
+        transition: transform 0.5s ease;
+      }
+
+      .testimonial {
+        min-width: 100%;
+        background-color: white;
+        padding: 3rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        text-align: left;
+        position: relative;
+      }
+
+      .testimonial::before {
+        content: "\201C";
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 5rem;
+        color: rgba(47, 79, 127, 0.1);
+        font-family: Georgia, serif;
+        line-height: 1;
+      }
+
+      .testimonial p {
+        font-style: italic;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        line-height: 1.8;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .user-info img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 1rem;
+        border: 3px solid #4caf50;
+        object-fit: cover;
+      }
+
+      .user-info .user-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-info .name {
+        font-weight: 600;
+        color: #2f4f7f;
+      }
+
+      .user-info .role {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .testimonial-nav {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .testimonial-nav button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background-color: #2f4f7f;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .testimonial-nav button:hover {
+        background-color: #4caf50;
+        transform: scale(1.1);
+      }
+
+      .testimonial-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #ccc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .dot.active {
+        background-color: #4caf50;
+        transform: scale(1.3);
+      }
+
+      /* CTA Section */
+      .cta {
+        background: linear-gradient(135deg, #4caf50 0%, #2f9e44 100%);
+        color: white;
+        text-align: center;
+        padding: 5rem 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta::before,
+      .cta::after {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .cta::before {
+        top: -100px;
+        left: -100px;
+        animation: pulse 4s infinite alternate;
+      }
+
+      .cta::after {
+        bottom: -100px;
+        right: -100px;
+        animation: pulse 4s infinite alternate-reverse;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.5);
+        }
+      }
+
+      .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+
+      .cta h2 {
+        color: white;
+        margin-bottom: 1.5rem;
+      }
+
+      .cta h2::after {
+        background-color: white;
+      }
+
+      .cta p {
+        font-size: 1.2rem;
+        margin-bottom: 2.5rem;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .cta .btn-primary {
+        background-color: white;
+        color: #4caf50;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+      }
+
+      .cta .btn-primary:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.5);
+      }
+
+      /* Footer */
+      footer {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 5rem 2rem 2rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .footer-logo img {
+        width: 40px;
+        height: 40px;
+        margin-right: 1rem;
+      }
+
+      .footer-about p {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1.5rem;
+      }
+
+      .footer-links h4,
+      .footer-contact h4 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+      }
+
+      .footer-links h4::after,
+      .footer-contact h4::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background-color: #4caf50;
+      }
+
+      .footer-links ul {
+        list-style: none;
+      }
+
+      .footer-links ul li {
+        margin-bottom: 0.8rem;
+      }
+
+      .footer-links ul li a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+      }
+
+      .footer-links ul li a:hover {
+        color: #4caf50;
+        transform: translateX(5px);
+      }
+
+      .footer-contact p {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .footer-contact p i {
+        margin-right: 1rem;
+        color: #4caf50;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      .social-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .social-links a:hover {
+        background-color: #4caf50;
+        transform: translateY(-5px);
+      }
+
+      .copyright {
+        text-align: center;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+      }
+
+      /* Animations */
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+      }
+
+      .animate-on-scroll.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 992px) {
+        .nav-links {
+          display: none;
+        }
+
+        .drawer-icon {
+          display: block;
+        }
+
+        .hero-buttons {
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: 250px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        section {
+          padding: 4rem 1.5rem;
+        }
+
+        .header-content {
+          padding: 1rem 1.5rem;
+        }
+
+        .steps-container,
+        .features-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .step,
+        .feature {
+          padding: 2rem 1.5rem;
+        }
+
+        .footer-content {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h2 {
+          font-size: 1.8rem;
+        }
+
+        .hero-content h1 {
+          font-size: 2rem;
+        }
+
+        .hero-content p {
+          font-size: 1rem;
+        }
+
+        .drawer {
+          width: 250px;
+          right: -250px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header id="header">
+      <div class="header-content">
+        <a href="#" class="logo">Moniebase</a>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="drawer-icon" id="drawerIcon">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+    </header>
+
+    <div class="drawer" id="drawer">
+      <ul>
+        <li class="active" onclick="navigateTo('home')">Home</li>
+        <li onclick="navigateTo('features')">Features</li>
+        <li onclick="navigateTo('how-it-works')">How It Works</li>
+        <li onclick="navigateTo('testimonials')">Testimonials</li>
+        <li onclick="navigateTo('contact')">Contact</li>
+        <li onclick="navigateTo('login')">Login / Sign up</li>
+      </ul>
+      <div class="drawer-footer">
+        <img
+          src="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+          alt="Moniebase Logo"
+        />
+        <p class="footer-text">Moniebase</p>
+      </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <section class="hero-section" id="home">
+      <div class="hero-content">
+        <h1>Revolutionize Your Financial Transactions</h1>
+        <p>Simple, Secure, and Instant Payments Across Nigeria</p>
+        <div class="hero-buttons">
+          <button onclick="navigateTo('signup')" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Get Started
+          </button>
+          <button onclick="navigateTo('learn-more')" class="btn btn-secondary">
+            <i class="fas fa-info-circle"></i> Learn More
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+      <h2>How Moniebase Works</h2>
+      <div class="steps-container">
+        <div class="step animate-on-scroll">
+          <i class="fas fa-user-plus"></i>
+          <h3>Create Account</h3>
+          <p>
+            Sign up with just your phone number and email in minutes. Our
+            streamlined process ensures you're up and running quickly.
+          </p>
+        </div>
+        <div class="step animate-on-scroll" data-delay="200">
+          <i class="fas fa-link"></i>
+          <h3>Link Bank</h3>
+          <p>
+            Securely connect your bank account with a few clicks. Your financial
+            information is protected with bank-level encryption.
+          </p>
+        </div>
+        <div class="step animate-on-scroll" data-delay="400">
+          <i class="fas fa-exchange-alt"></i>
+          <h3>Start Transacting</h3>
+          <p>
+            Send money, buy airtime, pay bills instantly. Experience the
+            convenience of managing all your financial needs in one place.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <h2>Why Choose Moniebase?</h2>
+      <div class="features-grid">
+        <div class="feature animate-on-scroll">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Secure Transactions</h3>
+          <p>
+            Bank-level encryption to protect your financial data. Your security
+            is our top priority.
+          </p>
+        </div>
+        <div class="feature animate-on-scroll" data-delay="200">
+          <i class="fas fa-money-bill-wave"></i>
+          <h3>Low Charges</h3>
+          <p>
+            Minimal transaction fees compared to traditional banks. Save money
+            with every transaction.
+          </p>
+        </div>
+        <div class="feature animate-on-scroll" data-delay="400">
+          <i class="fas fa-mobile-alt"></i>
+          <h3>Mobile Friendly</h3>
+          <p>
+            Access your account from anywhere, anytime. Our responsive design
+            works on all devices.
+          </p>
+        </div>
+        <div class="feature animate-on-scroll" data-delay="600">
+          <i class="fas fa-clock"></i>
+          <h3>Instant Transfers</h3>
+          <p>
+            Send and receive money in seconds. No more waiting for transactions
+            to clear.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+      <h2>What Our Users Say</h2>
+      <div class="testimonial-carousel">
+        <div class="testimonial-container" id="testimonialContainer">
+          <div class="testimonial">
+            <p>
+              "Moniebase has made my financial transactions so much easier. The
+              app is intuitive, transfers are instant, and the customer service
+              is exceptional. Highly recommended for anyone looking for a
+              reliable financial platform in Nigeria!"
+            </p>
+            <div class="user-info">
+              <img
+                src="https://randomuser.me/api/portraits/men/1.jpg"
+                alt="User Avatar"
+              />
+              <div class="user-details">
+                <span class="name">Michael Okonkwo</span>
+                <span class="role">Entrepreneur</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial">
+            <p>
+              "The fastest and most reliable payment platform I've used in
+              Nigeria. I've been using Moniebase for over a year now, and it has
+              transformed how I handle my finances. The low transaction fees are
+              a game-changer!"
+            </p>
+            <div class="user-info">
+              <img
+                src="https://randomuser.me/api/portraits/women/2.jpg"
+                alt="User Avatar"
+              />
+              <div class="user-details">
+                <span class="name">Sarah Adeyemi</span>
+                <span class="role">Mother</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial">
+            <p>
+              "Zero hidden charges and super convenient. Moniebase is a
+              game-changer! I can pay all my bills, send money to family, and
+              manage my finances all in one place. The interface is clean and
+              user-friendly."
+            </p>
+            <div class="user-info">
+              <img
+                src="https://randomuser.me/api/portraits/men/3.jpg"
+                alt="User Avatar"
+              />
+              <div class="user-details">
+                <span class="name">David Ekene</span>
+                <span class="role">Teacher</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-nav">
+          <button id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+          <button id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="testimonial-dots" id="testimonialDots">
+          <span class="dot active" data-index="0"></span>
+          <span class="dot" data-index="1"></span>
+          <span class="dot" data-index="2"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-content">
+        <h2>Ready to Transform Your Financial Experience?</h2>
+        <p>
+          Join thousands of Nigerians who trust Moniebase for their daily
+          transactions
+        </p>
+        <button onclick="navigateTo('signup')" class="btn btn-primary">
+          <i class="fas fa-rocket"></i> Create Free Account
+        </button>
+      </div>
+    </section>
+
+    <footer id="contact">
+      <div class="footer-content">
+        <div class="footer-about">
+          <div class="footer-logo">
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/17374/17374963.png"
+              alt="Moniebase Logo"
+            />
+            <h3>Moniebase</h3>
+          </div>
+          <p>
+            Moniebase is Nigeria's leading financial technology platform,
+            providing seamless and secure financial services to individuals and
+            businesses across the country.
+          </p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://x.com/moniebase?t=yquGSdoirfW2QAr6fF_OLQ&s=09"
+              ><i class="fab fa-twitter"></i
+            ></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact Us</h4>
+          <p>
+            <i class="fas fa-map-marker-alt"></i> 123 Innovation Drive, Lagos,
+            Nigeria
+          </p>
+          <p><i class="fas fa-phone"></i> +234 123 456 7890</p>
+          <p><i class="fas fa-envelope"></i> shoppifyinc@gmail.com</p>
+        </div>
+      </div>
+      <div class="copyright">© 2025 Moniebase. All Rights Reserved.</div>
+    </footer>
+
+    <script>
+      // Mobile Navigation
+      const drawerIcon = document.getElementById("drawerIcon");
+      const drawer = document.getElementById("drawer");
+      const overlay = document.getElementById("overlay");
+
+      drawerIcon.addEventListener("click", toggleDrawer);
+      overlay.addEventListener("click", closeDrawer);
+
+      function toggleDrawer() {
+        drawer.classList.toggle("open");
+        overlay.classList.toggle("active");
+        document.body.style.overflow = drawer.classList.contains("open")
+          ? "hidden"
+          : "";
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove("open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+
+      // Scroll Animation
+      const header = document.getElementById("header");
+      const animatedElements = document.querySelectorAll(".animate-on-scroll");
+
+      window.addEventListener("scroll", function () {
+        // Header scroll effect
+        if (window.scrollY > 50) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+
+        // Animate elements on scroll
+        animatedElements.forEach((element) => {
+          const elementPosition = element.getBoundingClientRect().top;
+          const screenPosition = window.innerHeight / 1.3;
+          const delay = element.dataset.delay || 0;
+
+          if (elementPosition < screenPosition) {
+            setTimeout(() => {
+              element.classList.add("active");
+            }, delay);
+          }
+        });
+      });
+
+      // Testimonial Carousel
+      const testimonialContainer = document.getElementById(
+        "testimonialContainer"
+      );
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const dots = document.querySelectorAll(".dot");
+      let currentIndex = 0;
+
+      function showTestimonial(index) {
+        const testimonials = document.querySelectorAll(".testimonial");
+        if (index < 0) index = testimonials.length - 1;
+        if (index >= testimonials.length) index = 0;
+
+        currentIndex = index;
+        testimonialContainer.style.transform = `translateX(-${
+          currentIndex * 100
+        }%)`;
+
+        // Update dots
+        dots.forEach((dot, i) => {
+          dot.classList.toggle("active", i === currentIndex);
+        });
+      }
+
+      prevBtn.addEventListener("click", () => {
+        showTestimonial(currentIndex - 1);
+      });
+
+      nextBtn.addEventListener("click", () => {
+        showTestimonial(currentIndex + 1);
+      });
+
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          const index = parseInt(dot.dataset.index);
+          showTestimonial(index);
+        });
+      });
+
+      // Auto slide testimonials
+      setInterval(() => {
+        showTestimonial(currentIndex + 1);
+      }, 5000);
+
+      // Navigation
+      function navigateTo(page) {
+        switch (page) {
+          case "home":
+            window.location.href = "#home";
+            closeDrawer();
+            break;
+          case "features":
+            window.location.href = "#features";
+            closeDrawer();
+            break;
+          case "how-it-works":
+            window.location.href = "#how-it-works";
+            closeDrawer();
+            break;
+          case "testimonials":
+            window.location.href = "#testimonials";
+            closeDrawer();
+            break;
+          case "contact":
+            window.location.href = "#contact";
+            closeDrawer();
+            break;
+          case "login":
+            window.location.href = "login.html";
+            break;
+          case "signup":
+            window.location.href = "signup.html";
+            break;
+          case "learn-more":
+            window.location.href = "#how-it-works";
+            break;
+        }
+      }
+
+      // Initialize animations
+      window.addEventListener("load", function () {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          document.body.classList.add("loaded");
+
+          // Trigger scroll once to initialize animations
+          window.dispatchEvent(new Event("scroll"));
+        }, 100);
+      });
+    </script>
+  </body>
+</html>

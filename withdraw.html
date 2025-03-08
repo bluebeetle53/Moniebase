@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transfer to User</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 15px;
+        text-align: left;
+      }
+
+      header i {
+        font-size: 24px;
+        color: white;
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        cursor: pointer;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        padding: 0;
+        margin-left: 40px;
+      }
+
+      .container {
+        margin: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .form-group input {
+        width: 93%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+      }
+
+      .form-group input:disabled {
+        background-color: #f5f5f5;
+      }
+
+      #proceedButton {
+        background-color: #2f4f7f;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 90%;
+        margin: 0 auto;
+        display: block;
+      }
+
+      #proceedButton:hover {
+        background-color: #2f4f7f;
+      }
+
+      .bottom-sheet {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 20px;
+        text-align: center;
+        transition: bottom 0.3s ease;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 15px 15px 0 0;
+      }
+
+      .sheet-content img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .sheet-content p {
+        font-size: 16px;
+        margin: 20px 0;
+      }
+
+      #closeSheet {
+        background-color: #f5f5f5;
+        color: #333;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      #closeSheet:hover {
+        background-color: #e0e0e0;
+      }
+
+      .loader {
+        display: none;
+        border: 5px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 5px solid #2f4f7f;
+        width: 30px;
+        height: 30px;
+        margin: 20px auto;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .verification-status {
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .verification-pending {
+        color: #f39c12;
+      }
+
+      .verification-success {
+        color: #27ae60;
+      }
+
+      .verification-error {
+        color: #e74c3c;
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 5px;
+        z-index: 1000;
+        animation: fadeInOut 3s;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <i
+        class="fas fa-arrow-left"
+        onclick="window.location.href='home.html';"
+      ></i>
+      <h1>Transfer to User</h1>
+    </header>
+
+    <div class="container">
+      <form id="transferForm">
+        <div class="form-group">
+          <label for="receiverPhone">User ID (Phone Number)</label>
+          <input
+            type="tel"
+            id="receiverPhone"
+            placeholder="Enter User's Phone Number"
+            maxlength="11"
+          />
+          <div id="phoneNumberStatus" class="verification-status"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="receiverName">User Name</label>
+          <input type="text" id="receiverName" disabled />
+          <div id="verificationStatus" class="verification-status"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount (NGN)</label>
+          <input
+            type="number"
+            id="amount"
+            placeholder="Enter Amount"
+            min="100"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="narration">Narration (Optional)</label>
+          <input
+            type="text"
+            id="narration"
+            placeholder="What's this transfer for?"
+          />
+        </div>
+
+        <div class="loader" id="loader"></div>
+        <button type="button" id="proceedButton">Proceed</button>
+      </form>
+    </div>
+
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-content">
+        <img
+          id="statusIcon"
+          src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
+          alt="Status Icon"
+        />
+        <p id="confirmationMessage"></p>
+        <button id="closeSheet">Close</button>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+    <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // Function to display toast message
+      function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+          toast.remove();
+        }, 3000);
+      }
+
+      // Display loading status
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("proceedButton").disabled = true;
+      }
+
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("proceedButton").disabled = false;
+      }
+
+      // Show verification status message
+      function showVerificationStatus(element, message, status) {
+        const statusElement = document.getElementById(element);
+        statusElement.textContent = message;
+
+        // Reset all classes
+        statusElement.classList.remove(
+          "verification-pending",
+          "verification-success",
+          "verification-error"
+        );
+
+        // Add appropriate class based on status
+        statusElement.classList.add(`verification-${status}`);
+        statusElement.style.display = "block";
+      }
+
+      // Hide verification status
+      function hideVerificationStatus(element) {
+        document.getElementById(element).style.display = "none";
+      }
+
+      // Show status message in bottom sheet
+      function showStatusMessage(success, message) {
+        const bottomSheet = document.getElementById("bottomSheet");
+        const statusIcon = document.getElementById("statusIcon");
+        const confirmationMessage = document.getElementById(
+          "confirmationMessage"
+        );
+
+        // Set appropriate icon based on success/failure
+        if (success) {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/free/png-256/free-check-verified-successful-accept-tick-yes-success-2822.png?f=webp&w=256";
+        } else {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256";
+        }
+
+        confirmationMessage.innerHTML = message;
+        bottomSheet.style.bottom = "0";
+      }
+
+      // Debounce function to prevent too many API calls
+      function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      // Global variable to store receiver's information
+      let receiverInfo = {
+        id: null,
+        name: "",
+        phone: "",
+      };
+
+      // Function to verify user phone number and get user details
+      const verifyUser = debounce(async function () {
+        const phoneNumber = document.getElementById("receiverPhone").value;
+
+        // Clear the receiver name field and reset receiver info
+        document.getElementById("receiverName").value = "";
+        receiverInfo = { id: null, name: "", phone: "" };
+
+        // Basic validation for phone number format
+        if (phoneNumber.length < 10 || phoneNumber.length > 11) {
+          showVerificationStatus(
+            "phoneNumberStatus",
+            "Enter a valid phone number",
+            "error"
+          );
+          hideVerificationStatus("verificationStatus");
+          return;
+        }
+
+        // Show pending verification status
+        showVerificationStatus(
+          "verificationStatus",
+          "Searching for user...",
+          "pending"
+        );
+
+        try {
+          // Get current user to prevent self-transfer
+          const currentUser = auth.currentUser;
+          if (!currentUser) {
+            showStatusMessage(
+              false,
+              "You are not logged in. Please log in first."
+            );
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 2000);
+            return;
+          }
+
+          // Get current user's phone number
+          const currentUserRef = database.ref(`users/${currentUser.uid}`);
+          const currentUserSnapshot = await currentUserRef.once("value");
+          const currentUserData = currentUserSnapshot.val();
+
+          if (currentUserData && currentUserData.phone === phoneNumber) {
+            showVerificationStatus(
+              "verificationStatus",
+              "You cannot transfer to yourself",
+              "error"
+            );
+            return;
+          }
+
+          // Search for user by phone number
+          const usersRef = database.ref("users");
+          const query = usersRef.orderByChild("phone").equalTo(phoneNumber);
+          const snapshot = await query.once("value");
+
+          if (snapshot.exists()) {
+            // User found
+            let receiverData;
+            let receiverId;
+
+            // Extract the user data (should be only one user with this phone)
+            snapshot.forEach((childSnapshot) => {
+              receiverId = childSnapshot.key;
+              receiverData = childSnapshot.val();
+            });
+
+            if (receiverData && receiverData.fullName) {
+              // Update the DOM elements
+              document.getElementById("receiverName").value =
+                receiverData.fullName;
+              showVerificationStatus(
+                "verificationStatus",
+                "User found",
+                "success"
+              );
+
+              // Store receiver info in our global variable
+              receiverInfo = {
+                id: receiverId,
+                name: receiverData.fullName,
+                phone: phoneNumber,
+              };
+            } else {
+              showVerificationStatus(
+                "verificationStatus",
+                "User found but name is not available",
+                "error"
+              );
+            }
+          } else {
+            // User not found
+            showVerificationStatus(
+              "verificationStatus",
+              "User not found",
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("User verification error:", error);
+          showVerificationStatus(
+            "verificationStatus",
+            "Error verifying user",
+            "error"
+          );
+        }
+      }, 500);
+
+      // Phone number validation and user verification
+      document
+        .getElementById("receiverPhone")
+        .addEventListener("input", function () {
+          const phoneNumber = this.value;
+
+          // Show validation status for phone number
+          if (
+            phoneNumber.length > 0 &&
+            (phoneNumber.length < 10 || phoneNumber.length > 11)
+          ) {
+            showVerificationStatus(
+              "phoneNumberStatus",
+              "Phone number must be 10-11 digits",
+              "error"
+            );
+            hideVerificationStatus("verificationStatus");
+          } else if (phoneNumber.length >= 11 && phoneNumber.length <= 12) {
+            showVerificationStatus(
+              "phoneNumberStatus",
+              "Valid phone number format",
+              "success"
+            );
+            // Verify user
+            verifyUser();
+          } else {
+            hideVerificationStatus("phoneNumberStatus");
+            hideVerificationStatus("verificationStatus");
+          }
+        });
+
+      // Function to handle transfer process
+      document
+        .getElementById("proceedButton")
+        .addEventListener("click", async () => {
+          const amount = parseFloat(document.getElementById("amount").value);
+          const narration =
+            document.getElementById("narration").value || "User Transfer";
+
+          // Validate input fields
+          if (!receiverInfo.id || !receiverInfo.name || !amount) {
+            showStatusMessage(
+              false,
+              "Please fill out all required fields and ensure recipient is verified."
+            );
+            return;
+          }
+
+          if (amount < 10) {
+            showStatusMessage(false, "Minimum transfer amount is NGN 100.");
+            return;
+          }
+
+          showLoader();
+
+          try {
+            const user = auth.currentUser;
+            if (!user) {
+              hideLoader();
+              showStatusMessage(
+                false,
+                "User not logged in. Please log in to proceed."
+              );
+              setTimeout(() => {
+                window.location.href = "login.html";
+              }, 2000);
+              return;
+            }
+
+            // Fetch sender's details from Firebase
+            const senderRef = database.ref("users/" + user.uid);
+            const senderSnapshot = await senderRef.once("value");
+            const senderData = senderSnapshot.val();
+
+            if (!senderData) {
+              hideLoader();
+              showStatusMessage(
+                false,
+                "Error retrieving your account information. Please try again later."
+              );
+              return;
+            }
+
+            // Check if sender has enough balance
+            if (senderData.balance < amount) {
+              hideLoader();
+              showStatusMessage(
+                false,
+                `Your transfer to ${receiverInfo.name} failed due to insufficient balance. Please fund your account and try again.`
+              );
+              return;
+            }
+
+            // Fetch receiver's details from Firebase
+            const receiverRef = database.ref("users/" + receiverInfo.id);
+            const receiverSnapshot = await receiverRef.once("value");
+            const receiverData = receiverSnapshot.val();
+
+            if (!receiverData) {
+              hideLoader();
+              showStatusMessage(false, "Recipient user data not found.");
+              return;
+            }
+
+            // Generate transaction ID
+            const transactionId = "UTR" + Date.now().toString().substring(5);
+
+            // Transaction timestamp
+            const timestamp = firebase.database.ServerValue.TIMESTAMP;
+            const formattedDate = new Date().toLocaleDateString();
+
+            // Create common transaction details
+            const commonTransactionDetails = {
+              transactionId: transactionId,
+              amount: amount,
+              narration: narration,
+              status: "success",
+              timestamp: timestamp,
+              formattedDate: formattedDate,
+            };
+
+            // Create transaction object for sender (debit)
+            const senderTransaction = {
+              ...commonTransactionDetails,
+              type: "transfer",
+              direction: "outgoing",
+              sender: {
+                userId: user.uid,
+                name: senderData.fullName || "User",
+                phone: senderData.phone || "",
+              },
+              recipient: {
+                userId: receiverInfo.id,
+                name: receiverInfo.name,
+                phone: receiverInfo.phone,
+              },
+            };
+
+            // Create transaction object for receiver (credit)
+            const receiverTransaction = {
+              ...commonTransactionDetails,
+              type: "deposit",
+              direction: "incoming",
+              sender: {
+                userId: user.uid,
+                name: senderData.fullName || "User",
+                phone: senderData.phone || "",
+              },
+              recipient: {
+                userId: receiverInfo.id,
+                name: receiverInfo.name,
+                phone: receiverInfo.phone,
+              },
+            };
+
+            // Update sender's balance (deduct amount)
+            const newSenderBalance = senderData.balance - amount;
+            await senderRef.update({ balance: newSenderBalance });
+
+            // Update receiver's balance (add amount)
+            const newReceiverBalance = (receiverData.balance || 0) + amount;
+            await receiverRef.update({ balance: newReceiverBalance });
+
+            // Add to sender's transaction history
+            await database
+              .ref(`users/${user.uid}/transactions/${transactionId}`)
+              .set(senderTransaction);
+
+            // Add to receiver's transaction history
+            await database
+              .ref(`users/${receiverInfo.id}/transactions/${transactionId}`)
+              .set(receiverTransaction);
+
+            // Add to global transactions collection
+            await database.ref(`transactions/${transactionId}`).set({
+              ...senderTransaction,
+              senderUserId: user.uid,
+              receiverUserId: receiverInfo.id,
+            });
+
+            hideLoader();
+            showStatusMessage(
+              true,
+              `Your transfer of NGN ${amount.toLocaleString()} to ${
+                receiverInfo.name
+              } was successful.`
+            );
+
+            // Redirect to transaction history page after 2 seconds
+            setTimeout(() => {
+              window.location.href = "history.html";
+            }, 2000);
+          } catch (error) {
+            hideLoader();
+            console.error("Transfer error:", error);
+            showStatusMessage(
+              false,
+              "An error occurred while processing your transfer. Please try again later."
+            );
+          }
+        });
+
+      // Close the bottom sheet
+      document.getElementById("closeSheet").addEventListener("click", () => {
+        document.getElementById("bottomSheet").style.bottom = "-100%";
+      });
+
+      // Check if user is logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
+      });
+
+      // Session timeout functionality
+      function redirectToLogin() {
+        window.location.href = "login.html";
+      }
+
+      let inactivityTimeout;
+
+      function resetInactivityTimer() {
+        clearTimeout(inactivityTimeout);
+        inactivityTimeout = setTimeout(redirectToLogin, 60000);
+      }
+
+      document.addEventListener("mousemove", resetInactivityTimer);
+      document.addEventListener("keydown", resetInactivityTimer);
+
+      resetInactivityTimer();
+    </script>
+  </body>
+</html>
