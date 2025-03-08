@@ -930,11 +930,15 @@
           return;
         }
 
-        
         // For now, we'll just show an alert
         alert(
-          `You're about to report an issue with transaction ${transactionId}.`
+          `You're about to report an issue with transaction ${transactionId}`
         );
+
+        // In a real implementation, you would:
+        // 1. Open a modal with a form to report the issue
+        // 2. Submit the form to an API
+        // 3. Show a confirmation message
       }
 
       // Repeat transaction functionality
@@ -959,9 +963,7 @@
         alert(
           `Preparing to repeat transfer to ${
             transaction.recipient?.accountName || "Unknown"
-          } for ${formatCurrency(
-            transaction.amount
-          )}. `
+          } for ${formatCurrency(transaction.amount)}`
         );
 
         // In a real implementation, you would:
