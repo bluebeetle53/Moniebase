@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fund Betting Account</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #1e40af;
+        --light-bg: #f3f4f6;
+        --white: #ffffff;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --danger: #ef4444;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --border-radius: 8px;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+        min-height: 100vh;
+      }
+
+      header {
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .back-button {
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        cursor: pointer;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+      }
+
+      .back-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      h1 {
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0rem auto;
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius);
+        border: 1px solid #d1d5db;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      .form-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-input::placeholder {
+        color: #9ca3af;
+      }
+
+      .form-input:disabled {
+        background-color: #f9fafb;
+        color: #6b7280;
+        cursor: not-allowed;
+      }
+
+      select.form-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+      }
+
+      .button {
+        display: block;
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        text-align: center;
+      }
+
+      .button:hover {
+        background-color: var(--secondary-color);
+      }
+
+      .button:active {
+        transform: translateY(1px);
+      }
+
+      .button:disabled {
+        background-color: #93c5fd;
+        cursor: not-allowed;
+      }
+
+      .verification-status {
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .verification-status i {
+        margin-right: 0.5rem;
+      }
+
+      .verification-pending {
+        color: var(--warning);
+      }
+
+      .verification-success {
+        color: var(--success);
+      }
+
+      .verification-error {
+        color: var(--danger);
+      }
+
+      .bottom-sheet {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background-color: var(--white);
+        padding: 2rem;
+        border-radius: 1rem 1rem 0 0;
+        box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .sheet-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .status-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+      }
+
+      .confirmation-message {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .close-button {
+        background-color: #f3f4f6;
+        color: var(--text-dark);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .close-button:hover {
+        background-color: #e5e7eb;
+      }
+
+      .loader-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem 0;
+      }
+
+      .loader {
+        display: none;
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid #dbeafe;
+        border-radius: 50%;
+        border-top: 3px solid var(--primary-color);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .info-text {
+        font-size: 0.875rem;
+        color: var(--text-light);
+        margin-top: 0.5rem;
+      }
+
+      .form-divider {
+        height: 1px;
+        background-color: #e5e7eb;
+        margin: 2rem 0;
+      }
+
+      .input-with-icon {
+        position: relative;
+      }
+
+      .input-with-icon .form-input {
+        padding-left: 3rem;
+      }
+
+      .input-with-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+      }
+
+      .betting-logo {
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+        vertical-align: middle;
+        border-radius: 4px;
+      }
+
+      .platform-option {
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="back-button" onclick="window.location.href='home.html';">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <h1>Fund Betting Account</h1>
+    </header>
+
+    <div class="container">
+      <form id="bettingForm">
+        <div class="form-group">
+          <label for="bettingPlatform">Select Betting Platform</label>
+          <select id="bettingPlatform" class="form-input">
+            <option value="" disabled selected>Choose betting platform</option>
+            <option value="sportybet">Sporty Bet</option>
+            <option value="betnaija">Bet Naija</option>
+            <option value="ilotbet">iLotBet</option>
+            <option value="betking">BetKing</option>
+            <option value="easywin">EasyWin</option>
+            <option value="1xbet">1XBet</option>
+            <option value="betano">Betano</option>
+            <option value="football">Football.com</option>
+            <option value="bangbet">BangBet</option>
+            <option value="msport">MSport</option>
+            <option value="betway">Betway</option>
+            <option value="betbaba">BetBaba</option>
+            <option value="22bet">22Bet</option>
+            <option value="surebet247">Surebet247</option>
+            <option value="betgr8">Betgr8</option>
+            <option value="accessbet">Accessbet</option>
+            <option value="nairabet">Nairabet</option>
+            <option value="naijabet">Naijabet</option>
+            <option value="paripesa">PariPesa</option>
+            <option value="betfarm">Betfarm</option>
+            <option value="hallabet">Hallabet</option>
+            <option value="betbonanza">Betbonanza</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="accountId">User ID / Account Number</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input
+              type="text"
+              id="accountId"
+              class="form-input"
+              placeholder="Enter your betting account ID"
+            />
+          </div>
+          <div id="accountIdStatus" class="verification-status"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmAccountId">Confirm User ID / Account Number</label>
+          <div class="input-with-icon">
+            <i class="fas fa-check-circle"></i>
+            <input
+              type="text"
+              id="confirmAccountId"
+              class="form-input"
+              placeholder="Confirm your betting account ID"
+            />
+          </div>
+          <div id="confirmIdStatus" class="verification-status"></div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-group">
+          <label for="amount">Amount (NGN)</label>
+          <div class="input-with-icon">
+            <i class="fas fa-naira-sign"></i>
+            <input
+              type="number"
+              id="amount"
+              class="form-input"
+              placeholder="Enter amount (minimum ₦200)"
+              min="200"
+              step="100"
+            />
+          </div>
+          <p class="info-text">Minimum funding amount is ₦200</p>
+        </div>
+
+        <div class="loader-wrapper">
+          <div class="loader" id="loader"></div>
+        </div>
+
+        <button type="button" id="proceedButton" class="button">
+          <i class="fas fa-paper-plane"></i> Fund Account
+        </button>
+      </form>
+    </div>
+
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="sheet-content">
+        <img
+          id="statusIcon"
+          class="status-icon"
+          src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
+          alt="Status Icon"
+        />
+        <p id="confirmationMessage" class="confirmation-message"></p>
+        <button id="closeSheet" class="close-button">Close</button>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
+    <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // Display loading status
+      function showLoader() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("proceedButton").disabled = true;
+      }
+
+      function hideLoader() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("proceedButton").disabled = false;
+      }
+
+      // Show verification status message
+      function showVerificationStatus(element, message, status) {
+        const statusElement = document.getElementById(element);
+        let icon = "";
+
+        if (status === "pending") {
+          icon = '<i class="fas fa-spinner fa-spin"></i>';
+        } else if (status === "success") {
+          icon = '<i class="fas fa-check-circle"></i>';
+        } else if (status === "error") {
+          icon = '<i class="fas fa-exclamation-circle"></i>';
+        }
+
+        statusElement.innerHTML = icon + message;
+
+        // Reset all classes
+        statusElement.classList.remove(
+          "verification-pending",
+          "verification-success",
+          "verification-error"
+        );
+
+        // Add appropriate class based on status
+        statusElement.classList.add(`verification-${status}`);
+        statusElement.style.display = "flex";
+      }
+
+      // Hide verification status
+      function hideVerificationStatus(element) {
+        document.getElementById(element).style.display = "none";
+      }
+
+      // Show status message in bottom sheet
+      function showStatusMessage(success, message) {
+        const bottomSheet = document.getElementById("bottomSheet");
+        const statusIcon = document.getElementById("statusIcon");
+        const confirmationMessage = document.getElementById(
+          "confirmationMessage"
+        );
+
+        // Set appropriate icon based on success/failure
+        if (success) {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/free/png-256/free-check-verified-successful-accept-tick-yes-success-2822.png?f=webp&w=256";
+        } else {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256";
+        }
+
+        confirmationMessage.innerHTML = message;
+        bottomSheet.style.bottom = "0";
+      }
+
+      // Get platform name from value
+      function getPlatformName(platformValue) {
+        const platformSelect = document.getElementById("bettingPlatform");
+        const selectedOption =
+          platformSelect.options[platformSelect.selectedIndex];
+        return selectedOption ? selectedOption.text : platformValue;
+      }
+
+      // Account ID validation
+      document
+        .getElementById("accountId")
+        .addEventListener("input", function () {
+          const accountId = this.value.trim();
+
+          // Show validation status for account ID
+          if (accountId.length > 0 && accountId.length < 4) {
+            showVerificationStatus(
+              "accountIdStatus",
+              "Account ID is too short",
+              "error"
+            );
+          } else if (accountId.length >= 4) {
+            showVerificationStatus(
+              "accountIdStatus",
+              "Valid account ID format",
+              "success"
+            );
+
+            // Check if confirmation field is filled and matches
+            const confirmId = document
+              .getElementById("confirmAccountId")
+              .value.trim();
+            if (confirmId && confirmId !== accountId) {
+              showVerificationStatus(
+                "confirmIdStatus",
+                "Account IDs do not match",
+                "error"
+              );
+            } else if (confirmId && confirmId === accountId) {
+              showVerificationStatus(
+                "confirmIdStatus",
+                "Account IDs match",
+                "success"
+              );
+            }
+          } else {
+            hideVerificationStatus("accountIdStatus");
+          }
+        });
+
+      // Confirm Account ID validation
+      document
+        .getElementById("confirmAccountId")
+        .addEventListener("input", function () {
+          const confirmId = this.value.trim();
+          const accountId = document.getElementById("accountId").value.trim();
+
+          if (confirmId && accountId && confirmId !== accountId) {
+            showVerificationStatus(
+              "confirmIdStatus",
+              "Account IDs do not match",
+              "error"
+            );
+          } else if (confirmId && accountId && confirmId === accountId) {
+            showVerificationStatus(
+              "confirmIdStatus",
+              "Account IDs match",
+              "success"
+            );
+          } else {
+            hideVerificationStatus("confirmIdStatus");
+          }
+        });
+
+      // Format amount as currency
+      document.getElementById("amount").addEventListener("input", function () {
+        // Remove non-numeric characters
+        this.value = this.value.replace(/[^\d]/g, "");
+
+        // Ensure minimum amount
+        if (this.value && parseInt(this.value) < 200) {
+          this.setCustomValidity("Minimum amount is ₦200");
+        } else {
+          this.setCustomValidity("");
+        }
+      });
+
+      // Function to handle betting account funding process
+      document
+        .getElementById("proceedButton")
+        .addEventListener("click", async () => {
+          const bettingPlatform =
+            document.getElementById("bettingPlatform").value;
+          const platformName = getPlatformName(bettingPlatform);
+          const accountId = document.getElementById("accountId").value.trim();
+          const confirmAccountId = document
+            .getElementById("confirmAccountId")
+            .value.trim();
+          const amount = parseFloat(document.getElementById("amount").value);
+
+          // Validate input fields
+          if (!bettingPlatform || !accountId || !amount) {
+            showStatusMessage(false, "Please fill out all required fields.");
+            return;
+          }
+
+          if (accountId !== confirmAccountId) {
+            showStatusMessage(
+              false,
+              "Account IDs do not match. Please check and try again."
+            );
+            return;
+          }
+
+          if (amount < 200) {
+            showStatusMessage(false, "Minimum funding amount is NGN 200.");
+            return;
+          }
+
+          showLoader();
+
+          try {
+            const user = auth.currentUser;
+            if (!user) {
+              hideLoader();
+              showStatusMessage(
+                false,
+                "User not logged in. Please log in to proceed."
+              );
+              setTimeout(() => {
+                window.location.href = "login.html";
+              }, 2000);
+              return;
+            }
+
+            // Fetch user balance from Firebase
+            const userRef = database.ref("users/" + user.uid);
+            const snapshot = await userRef.once("value");
+            const userData = snapshot.val();
+
+            if (!userData || userData.balance < amount) {
+              hideLoader();
+              showStatusMessage(
+                false,
+                `Your funding to ${platformName} account ${accountId} failed due to insufficient balance. Please fund your wallet and try again.`
+              );
+              return;
+            }
+
+            // Generate transaction ID
+            const transactionId = "BET" + Date.now().toString().substring(5);
+
+            // Transaction timestamp
+            const timestamp = firebase.database.ServerValue.TIMESTAMP;
+
+            // Create transaction object
+            const transaction = {
+              type: "betting",
+              transactionId: transactionId,
+              sender: {
+                userId: user.uid,
+                name: userData.fullName || "User",
+                phone: userData.phone || "",
+              },
+              recipient: {
+                platform: platformName,
+                accountId: accountId,
+                platformCode: bettingPlatform,
+              },
+              amount: amount,
+              status: "success",
+              timestamp: timestamp,
+              formattedDate: new Date().toLocaleString(),
+            };
+
+            // Update user balance
+            const newBalance = userData.balance - amount;
+            await userRef.update({ balance: newBalance });
+
+            // Add to user's transaction history
+            await database
+              .ref(`users/${user.uid}/transactions/${transactionId}`)
+              .set(transaction);
+
+            // Add to global transactions collection
+            await database
+              .ref(`transactions/${transactionId}`)
+              .set(transaction);
+
+            hideLoader();
+            showStatusMessage(
+              true,
+              `
+          <strong>Funding Successful!</strong><br/>
+          You've funded ₦${amount.toLocaleString()} to your ${platformName} account (ID: ${accountId}).<br/>
+          Your new balance is ₦${newBalance.toLocaleString()}.
+        `
+            );
+
+            // Reset form
+            document.getElementById("bettingForm").reset();
+            hideVerificationStatus("accountIdStatus");
+            hideVerificationStatus("confirmIdStatus");
+
+            // Redirect to transaction history page after 3 seconds
+            setTimeout(() => {
+              window.location.href = "history.html";
+            }, 3000);
+          } catch (error) {
+            hideLoader();
+            console.error("Funding error:", error);
+            showStatusMessage(
+              false,
+              "An error occurred while processing your funding request. Please try again later."
+            );
+          }
+        });
+
+      // Close the bottom sheet
+      document.getElementById("closeSheet").addEventListener("click", () => {
+        document.getElementById("bottomSheet").style.bottom = "-100%";
+      });
+
+      // Check if user is logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
+      });
+    </script>
+  </body>
+</html>
