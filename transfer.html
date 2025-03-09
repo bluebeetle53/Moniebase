@@ -10,78 +10,171 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #1e40af;
+        --light-bg: #f3f4f6;
+        --white: #ffffff;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --danger: #ef4444;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --border-radius: 8px;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+        min-height: 100vh;
       }
 
       header {
-        background-color: #2f4f7f;
-        color: white;
-        padding: 15px;
-        text-align: left;
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 10;
       }
 
-      header i {
-        font-size: 24px;
-        color: white;
-        position: absolute;
-        left: 15px;
-        top: 15px;
+      .back-button {
+        font-size: 1.2rem;
+        margin-right: 1rem;
         cursor: pointer;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+      }
+
+      .back-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
       }
 
       h1 {
-        margin: 0;
-        font-size: 22px;
-        padding: 0;
-        margin-left: 40px;
+        font-size: 1.3rem;
+        font-weight: 600;
       }
 
       .container {
-        margin: 20px;
+        max-width: 600px;
+        margin: 0rem auto;
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
       }
 
       .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 1.5rem;
       }
 
       .form-group label {
         display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
       }
 
-      .form-group input,
-      .form-group select {
-        width: 93%;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        font-size: 16px;
+      .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius);
+        border: 1px solid #d1d5db;
+        font-size: 1rem;
+        transition: border-color 0.2s;
       }
 
-      .form-group input:disabled {
-        background-color: #f5f5f5;
+      .form-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
       }
 
-      #proceedButton {
-        background-color: #2f4f7f;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        width: 90%;
-        margin: 0 auto;
+      .form-input::placeholder {
+        color: #9ca3af;
+      }
+
+      .form-input:disabled {
+        background-color: #f9fafb;
+        color: #6b7280;
+        cursor: not-allowed;
+      }
+
+      select.form-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+      }
+
+      .button {
         display: block;
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        text-align: center;
       }
 
-      #proceedButton:hover {
-        background-color: #2f4f7f;
+      .button:hover {
+        background-color: var(--secondary-color);
+      }
+
+      .button:active {
+        transform: translateY(1px);
+      }
+
+      .button:disabled {
+        background-color: #93c5fd;
+        cursor: not-allowed;
+      }
+
+      .verification-status {
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .verification-status i {
+        margin-right: 0.5rem;
+      }
+
+      .verification-pending {
+        color: var(--warning);
+      }
+
+      .verification-success {
+        color: var(--success);
+      }
+
+      .verification-error {
+        color: var(--danger);
       }
 
       .bottom-sheet {
@@ -89,46 +182,64 @@
         bottom: -100%;
         left: 0;
         right: 0;
-        background-color: white;
-        padding: 20px;
+        background-color: var(--white);
+        padding: 2rem;
+        border-radius: 1rem 1rem 0 0;
+        box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .sheet-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         text-align: center;
-        transition: bottom 0.3s ease;
-        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 15px 15px 0 0;
       }
 
-      .sheet-content img {
-        width: 50px;
-        height: 50px;
+      .status-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
       }
 
-      .sheet-content p {
-        font-size: 16px;
-        margin: 20px 0;
+      .confirmation-message {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.5;
       }
 
-      #closeSheet {
-        background-color: #f5f5f5;
-        color: #333;
-        padding: 10px 20px;
+      .close-button {
+        background-color: #f3f4f6;
+        color: var(--text-dark);
+        padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 5px;
+        border-radius: var(--border-radius);
+        font-weight: 600;
         cursor: pointer;
-        margin-top: 10px;
+        transition: background-color 0.2s;
       }
 
-      #closeSheet:hover {
-        background-color: #e0e0e0;
+      .close-button:hover {
+        background-color: #e5e7eb;
+      }
+
+      .loader-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem 0;
       }
 
       .loader {
         display: none;
-        border: 5px solid #f3f3f3;
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid #dbeafe;
         border-radius: 50%;
-        border-top: 5px solid #2f4f7f;
-        width: 30px;
-        height: 30px;
-        margin: 20px auto;
+        border-top: 3px solid var(--primary-color);
         animation: spin 1s linear infinite;
       }
 
@@ -141,52 +252,141 @@
         }
       }
 
-      /* Styles for account verification status */
-      .verification-status {
-        font-size: 12px;
-        margin-top: 5px;
-        display: none;
+      .info-text {
+        font-size: 0.875rem;
+        color: var(--text-light);
+        margin-top: 0.5rem;
       }
 
-      .verification-pending {
-        color: #f39c12;
+      .form-divider {
+        height: 1px;
+        background-color: #e5e7eb;
+        margin: 2rem 0;
       }
 
-      .verification-success {
-        color: #27ae60;
+      .input-with-icon {
+        position: relative;
       }
 
-      .verification-error {
-        color: #e74c3c;
+      .input-with-icon .form-input {
+        padding-left: 3rem;
+      }
+
+      .input-with-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
       }
     </style>
   </head>
   <body>
     <header>
-      <i
-        class="fas fa-arrow-left"
-        onclick="window.location.href='home.html';"
-      ></i>
-      <h1>Transfer Cash</h1>
+      <div class="back-button" onclick="window.location.href='home.html';">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <h1>Transfer Money</h1>
     </header>
 
     <div class="container">
       <form id="transferForm">
         <div class="form-group">
           <label for="accountNumber">Account Number</label>
-          <input
-            type="text"
-            id="accountNumber"
-            placeholder="Enter Account Number"
-            maxlength="10"
-          />
+          <div class="input-with-icon">
+            <i class="fas fa-university"></i>
+            <input
+              type="text"
+              id="accountNumber"
+              class="form-input"
+              placeholder="Enter 10-digit account number"
+              maxlength="10"
+              inputmode="numeric"
+            />
+          </div>
           <div id="accountNumberStatus" class="verification-status"></div>
         </div>
 
         <div class="form-group">
           <label for="bank">Select Bank</label>
-          <select id="bank">
-            <option value="" disabled selected>Select Bank</option>
+          <select id="bank" class="form-input">
+            <option value="" disabled selected>Choose your bank</option>
+            <option value="044">Access Bank</option>
+            <option value="050">Ecobank</option>
+            <option value="058">GTBank</option>
+            <option value="011">First Bank</option>
+            <option value="032">Union Bank</option>
+            <option value="033">United Bank for Africa</option>
+            <option value="035">Wema Bank</option>
+            <option value="057">Zenith Bank</option>
+            <option value="084">Enterprise Bank Plc</option>
+            <option value="070">Fidelity Bank Plc</option>
+            <option value="214">First City Monument Bank Plc</option>
+            <option value="030">Heritage Banking Company Ltd</option>
+            <option value="301">Jaiz Bank Plc</option>
+            <option value="082">Keystone Bank Ltd</option>
+            <option value="076">Skye Bank Plc</option>
+            <option value="039">Stanbic IBTC Bank Plc</option>
+            <option value="232">Sterling Bank Plc</option>
+            <option value="215">Unity Bank Plc</option>
+            <option value="068">Standard Chartered Bank Nigeria Ltd</option>
+            <option value="999">Kuda Microfinance Bank</option>
+            <option value="120">Globus Bank</option>
+            <option value="100">Titan Trust Bank</option>
+            <option value="023">CitiBank Nigeria</option>
+            <option value="119">Opay</option>
+            <option value="120">PalmPay</option>
+            <option value="121">Moniepoint</option>
+
+            <option value="058">Access Bank</option>
+            <option value="023">Citibank Nigeria</option>
+            <option value="063">Diamond Bank</option>
+            <option value="050">Ecobank Nigeria</option>
+            <option value="070">Fidelity Bank</option>
+            <option value="011">First Bank of Nigeria</option>
+            <option value="414">First City Monument Bank (FCMB)</option>
+            <option value="058">Guaranty Trust Bank (GTB)</option>
+            <option value="030">Heritage Bank</option>
+            <option value="082">Keystone Bank</option>
+            <option value="232">Mainstreet Bank</option>
+            <option value="068">Sterling Bank</option>
+            <option value="076">Suntrust Bank</option>
+            <option value="033">Union Bank of Nigeria</option>
+            <option value="033">United Bank for Africa (UBA)</option>
+            <option value="035">Wema Bank</option>
+            <option value="057">Zenith Bank</option>
+            <option value="301">Jaiz Bank</option>
+            <option value="076">Polaris Bank</option>
+            <option value="221">Stanbic IBTC Bank</option>
+            <option value="068">Standard Chartered Bank Nigeria</option>
+            <option value="215">Unity Bank</option>
+            <option value="014">VFD Microfinance Bank</option>
+            <option value="065">Accion Microfinance Bank</option>
+            <option value="105">Apex Bank</option>
+            <option value="313">ASO Savings and Loans</option>
+            <option value="313">Baobab Microfinance Bank</option>
+            <option value="220">Citi Microfinance Bank</option>
+            <option value="238">Enugu State Microfinance Bank</option>
+            <option value="423">Fidson Microfinance Bank</option>
+            <option value="601">Fina Trust Microfinance Bank</option>
+            <option value="502">Gtbank Microfinance</option>
+            <option value="500">Lapo Microfinance Bank</option>
+            <option value="108">Mfb Bank</option>
+            <option value="307">
+              Nigerian Postal Service Microfinance Bank
+            </option>
+            <option value="320">Renmoney Microfinance Bank</option>
+            <option value="419">Royal Exchange Microfinance Bank</option>
+            <option value="313">Sokoto Microfinance Bank</option>
+            <option value="312">Sterling Microfinance Bank</option>
+            <option value="321">SunTrust Microfinance Bank</option>
+            <option value="432">Uche Microfinance Bank</option>
+            <option value="125">Veritas Microfinance Bank</option>
+            <option value="311">Wema Microfinance Bank</option>
+            <option value="502">Opay</option>
+            <option value="503">PalmPay</option>
+            <option value="504">Moniepoint</option>
+
             <option value="044">Access Bank</option>
             <option value="050">Ecobank</option>
             <option value="058">GTBank</option>
@@ -281,18 +481,32 @@
 
         <div class="form-group">
           <label for="accountName">Account Name</label>
-          <input type="text" id="accountName" disabled />
+          <input
+            type="text"
+            id="accountName"
+            class="form-input"
+            disabled
+            placeholder="Account name will appear here"
+          />
           <div id="verificationStatus" class="verification-status"></div>
         </div>
 
+        <div class="form-divider"></div>
+
         <div class="form-group">
           <label for="amount">Amount (NGN)</label>
-          <input
-            type="number"
-            id="amount"
-            placeholder="Enter Amount"
-            min="100"
-          />
+          <div class="input-with-icon">
+            <i class="fas fa-naira-sign"></i>
+            <input
+              type="number"
+              id="amount"
+              class="form-input"
+              placeholder="Enter amount (minimum ₦100)"
+              min="100"
+              step="100"
+            />
+          </div>
+          <p class="info-text">Minimum transfer amount is ₦100</p>
         </div>
 
         <div class="form-group">
@@ -300,12 +514,19 @@
           <input
             type="text"
             id="narration"
+            class="form-input"
             placeholder="What's this transfer for?"
+            maxlength="100"
           />
         </div>
 
-        <div class="loader" id="loader"></div>
-        <button type="button" id="proceedButton">Proceed</button>
+        <div class="loader-wrapper">
+          <div class="loader" id="loader"></div>
+        </div>
+
+        <button type="button" id="proceedButton" class="button">
+          <i class="fas fa-paper-plane"></i> Send Money
+        </button>
       </form>
     </div>
 
@@ -313,11 +534,12 @@
       <div class="sheet-content">
         <img
           id="statusIcon"
+          class="status-icon"
           src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
           alt="Status Icon"
         />
-        <p id="confirmationMessage"></p>
-        <button id="closeSheet">Close</button>
+        <p id="confirmationMessage" class="confirmation-message"></p>
+        <button id="closeSheet" class="close-button">Close</button>
       </div>
     </div>
 
@@ -360,7 +582,17 @@
       // Show verification status message
       function showVerificationStatus(element, message, status) {
         const statusElement = document.getElementById(element);
-        statusElement.textContent = message;
+        let icon = "";
+
+        if (status === "pending") {
+          icon = '<i class="fas fa-spinner fa-spin"></i>';
+        } else if (status === "success") {
+          icon = '<i class="fas fa-check-circle"></i>';
+        } else if (status === "error") {
+          icon = '<i class="fas fa-exclamation-circle"></i>';
+        }
+
+        statusElement.innerHTML = icon + message;
 
         // Reset all classes
         statusElement.classList.remove(
@@ -371,7 +603,7 @@
 
         // Add appropriate class based on status
         statusElement.classList.add(`verification-${status}`);
-        statusElement.style.display = "block";
+        statusElement.style.display = "flex";
       }
 
       // Hide verification status
@@ -534,6 +766,12 @@
         .addEventListener("input", function () {
           const accountNumber = this.value;
 
+          // Only allow numbers
+          if (!/^\d*$/.test(accountNumber)) {
+            this.value = accountNumber.replace(/\D/g, "");
+            return;
+          }
+
           // Show validation status for account number
           if (accountNumber.length > 0 && accountNumber.length < 10) {
             showVerificationStatus(
@@ -563,6 +801,19 @@
         // Only verify if account number is already entered correctly
         if (accountNumber.length === 10) {
           verifyAccount();
+        }
+      });
+
+      // Format amount as currency
+      document.getElementById("amount").addEventListener("input", function () {
+        // Remove non-numeric characters
+        this.value = this.value.replace(/[^\d]/g, "");
+
+        // Ensure minimum amount
+        if (this.value && parseInt(this.value) < 100) {
+          this.setCustomValidity("Minimum amount is ₦100");
+        } else {
+          this.setCustomValidity("");
         }
       });
 
@@ -672,13 +923,23 @@
             hideLoader();
             showStatusMessage(
               true,
-              `Your transfer of NGN ${amount.toLocaleString()} to ${accountName} was successful.`
+              `
+          <strong>Transfer Successful!</strong><br/>
+          You've transferred ₦${amount.toLocaleString()} to ${accountName}.<br/>
+          Your new balance is ₦${newBalance.toLocaleString()}.
+        `
             );
 
-            // Redirect to transaction history page after 2 seconds
+            // Reset form
+            document.getElementById("transferForm").reset();
+            document.getElementById("accountName").value = "";
+            hideVerificationStatus("accountNumberStatus");
+            hideVerificationStatus("verificationStatus");
+
+            // Redirect to transaction history page after 3 seconds
             setTimeout(() => {
               window.location.href = "history.html";
-            }, 2000);
+            }, 3000);
           } catch (error) {
             hideLoader();
             console.error("Transfer error:", error);
