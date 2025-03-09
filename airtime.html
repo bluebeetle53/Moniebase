@@ -9,85 +9,754 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-    <link rel="stylesheet" href="airtime.css" />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #1e40af;
+        --light-bg: #f3f4f6;
+        --white: #ffffff;
+        --text-dark: #1f2937;
+        --text-light: #4b5563;
+        --danger: #ef4444;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --border-radius: 8px;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+        min-height: 100vh;
+      }
+
+      header {
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .back-button {
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        cursor: pointer;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+      }
+
+      .back-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      h1 {
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0rem auto;
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius);
+        border: 1px solid #d1d5db;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      .form-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-input::placeholder {
+        color: #9ca3af;
+      }
+
+      .form-input:disabled {
+        background-color: #f9fafb;
+        color: #6b7280;
+        cursor: not-allowed;
+      }
+
+      select.form-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+      }
+
+      .button {
+        display: block;
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        text-align: center;
+      }
+
+      .button:hover {
+        background-color: var(--secondary-color);
+      }
+
+      .button:active {
+        transform: translateY(1px);
+      }
+
+      .button:disabled {
+        background-color: #93c5fd;
+        cursor: not-allowed;
+      }
+
+      .network-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .network-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .network-option:hover {
+        border-color: var(--primary-color);
+        background-color: #f0f7ff;
+      }
+
+      .network-option.selected {
+        border-color: var(--primary-color);
+        background-color: #e0f2fe;
+      }
+
+      .network-option img {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0.5rem;
+      }
+
+      .network-option span {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .input-with-icon {
+        position: relative;
+      }
+
+      .input-with-icon .form-input {
+        padding-left: 3rem;
+      }
+
+      .input-with-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+      }
+
+      .contact-picker {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+
+      .info-text {
+        font-size: 0.875rem;
+        color: var(--text-light);
+        margin-top: 0.5rem;
+      }
+
+      .quick-amounts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .quick-amount {
+        padding: 0.5rem 1rem;
+        background-color: #f3f4f6;
+        border-radius: var(--border-radius);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .quick-amount:hover {
+        background-color: #e5e7eb;
+      }
+
+      .loader-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem 0;
+      }
+
+      .loader {
+        display: none;
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid #dbeafe;
+        border-radius: 50%;
+        border-top: 3px solid var(--primary-color);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .bottom-sheet {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background-color: var(--white);
+        padding: 2rem;
+        border-radius: 1rem 1rem 0 0;
+        box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .sheet-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .status-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+      }
+
+      .confirmation-message {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .close-button {
+        background-color: #f3f4f6;
+        color: var(--text-dark);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .close-button:hover {
+        background-color: #e5e7eb;
+      }
+    </style>
   </head>
   <body>
     <header>
-      <i
-        class="fas fa-arrow-left"
-        onclick="window.location.href='home.html';"
-      ></i>
+      <div class="back-button" onclick="window.location.href='home.html';">
+        <i class="fas fa-arrow-left"></i>
+      </div>
       <h1>Airtime Recharge</h1>
     </header>
 
     <div class="container">
-      <form>
+      <form id="airtimeForm">
         <div class="form-group">
-          <label for="network">Select a Network</label>
-          <select id="network">
-            <option value="" disabled selected>Select Mobile Operator</option>
-            <option value="MTN">MTN</option>
-            <option value="AIRTEL">AIRTEL</option>
-            <option value="GLO">GLO</option>
-            <option value="9MOBILE">9 MOBILE</option>
-            <option value="ETISALAT">ETISALAT</option>
-          </select>
+          <label>Select Network</label>
+          <div class="network-options">
+            <div class="network-option" data-network="MTN">
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-256/free-mtn-3445577-2878522.png?f=webp&w=256"
+                alt="MTN"
+              />
+              <span>MTN</span>
+            </div>
+            <div class="network-option" data-network="AIRTEL">
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-256/free-airtel-282548.png?f=webp&w=256"
+                alt="Airtel"
+              />
+              <span>Airtel</span>
+            </div>
+            <div class="network-option" data-network="GLO">
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-256/free-glo-282672.png?f=webp&w=256"
+                alt="Glo"
+              />
+              <span>Glo</span>
+            </div>
+            <div class="network-option" data-network="9MOBILE">
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-256/free-9mobile-3445581-2878526.png?f=webp&w=256"
+                alt="9Mobile"
+              />
+              <span>9Mobile</span>
+            </div>
+          </div>
+          <input type="hidden" id="selectedNetwork" class="form-input" />
         </div>
 
         <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <div class="phone-container">
-            <input type="text" id="phone" placeholder="Enter phone number" />
-            <img
-              src="https://cdn.iconscout.com/icon/free/png-512/free-phone-icon-download-in-svg-png-gif-file-formats--mobile-smartphone-telephone-user-interface-icons-set-pack-1617678.png?f=webp&w=512"
-              alt="Phone Icon"
-              id="select-contact"
+          <label for="phoneNumber">Phone Number</label>
+          <div class="input-with-icon">
+            <i class="fas fa-phone"></i>
+            <input
+              type="tel"
+              id="phoneNumber"
+              class="form-input"
+              placeholder="Enter phone number"
+              maxlength="11"
+              inputmode="numeric"
+            />
+            <i
+              class="fas fa-address-book contact-picker"
+              id="contactPicker"
+            ></i>
+          </div>
+          <div id="phoneNumberStatus" class="info-text"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount (NGN)</label>
+          <div class="input-with-icon">
+            <i class="fas fa-naira-sign"></i>
+            <input
+              type="number"
+              id="amount"
+              class="form-input"
+              placeholder="Enter amount (minimum ₦50)"
+              min="50"
+              step="50"
             />
           </div>
+          <div class="quick-amounts">
+            <div class="quick-amount" data-amount="100">₦100</div>
+            <div class="quick-amount" data-amount="200">₦200</div>
+            <div class="quick-amount" data-amount="500">₦500</div>
+            <div class="quick-amount" data-amount="1000">₦1,000</div>
+          </div>
+          <p class="info-text">Minimum recharge amount is ₦50</p>
         </div>
 
-        <div class="form-group">
-          <label for="amount">Amount</label>
-          <input type="number" id="amount" placeholder="Enter Amount" />
+        <div class="loader-wrapper">
+          <div class="loader" id="loader"></div>
         </div>
 
-        <button type="button" id="buyAirtime">Buy Airtime</button>
+        <button type="button" id="buyAirtimeBtn" class="button">
+          <i class="fas fa-paper-plane"></i> Buy Airtime
+        </button>
       </form>
     </div>
 
     <div class="bottom-sheet" id="bottomSheet">
       <div class="sheet-content">
         <img
-          src="https://cdn.iconscout.com/icon/premium/png-512-thumb/warning-43-149965.png?f=webp&w=512"
-          alt="Warning"
+          id="statusIcon"
+          class="status-icon"
+          src="https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256"
+          alt="Status Icon"
         />
-        <p>
-          Insufficient Balance to purchase airtime. Please deposit/fund your
-          account to continue.
-        </p>
-        <button id="closeSheet">❌</button>
+        <p id="confirmationMessage" class="confirmation-message"></p>
+        <button id="closeSheet" class="close-button">Close</button>
       </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-database-compat.js"></script>
     <script>
-      document
-        .getElementById("select-contact")
-        .addEventListener("click", () => {
-          // Simulate selecting a contact from the phone list
-          const selectedContact = "08100921760"; // Replace this with actual phone contact integration
-          document.getElementById("phone").value = selectedContact;
-        });
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDJP2XIR51qGTLINiKvEoscYTMt11CaZ5s",
+        authDomain: "paytrust-71e30.firebaseapp.com",
+        databaseURL: "https://paytrust-71e30-default-rtdb.firebaseio.com/",
+        projectId: "paytrust-71e30",
+        storageBucket: "paytrust-71e30.appspot.com",
+        messagingSenderId: "492609516838",
+        appId: "1:492609516838:android:5a924ad3b7e8e508fa3de7",
+      };
 
-      document.getElementById("buyAirtime").addEventListener("click", () => {
-        // Display the bottom sheet
-        const bottomSheet = document.getElementById("bottomSheet");
-        bottomSheet.style.bottom = "0";
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const auth = firebase.auth();
+
+      // DOM Elements
+      const networkOptions = document.querySelectorAll(".network-option");
+      const selectedNetworkInput = document.getElementById("selectedNetwork");
+      const phoneNumberInput = document.getElementById("phoneNumber");
+      const phoneNumberStatus = document.getElementById("phoneNumberStatus");
+      const amountInput = document.getElementById("amount");
+      const quickAmounts = document.querySelectorAll(".quick-amount");
+      const buyAirtimeBtn = document.getElementById("buyAirtimeBtn");
+      const loader = document.getElementById("loader");
+      const bottomSheet = document.getElementById("bottomSheet");
+      const statusIcon = document.getElementById("statusIcon");
+      const confirmationMessage = document.getElementById(
+        "confirmationMessage"
+      );
+      const closeSheetBtn = document.getElementById("closeSheet");
+
+      // Network selection
+      networkOptions.forEach((option) => {
+        option.addEventListener("click", function () {
+          // Remove selected class from all options
+          networkOptions.forEach((opt) => opt.classList.remove("selected"));
+          // Add selected class to clicked option
+          this.classList.add("selected");
+          // Update hidden input value
+          selectedNetworkInput.value = this.getAttribute("data-network");
+        });
       });
 
-      document.getElementById("closeSheet").addEventListener("click", () => {
-        // Hide the bottom sheet
-        const bottomSheet = document.getElementById("bottomSheet");
+      // Quick amount selection
+      quickAmounts.forEach((quickAmount) => {
+        quickAmount.addEventListener("click", function () {
+          amountInput.value = this.getAttribute("data-amount");
+        });
+      });
+
+      // Phone number validation
+      phoneNumberInput.addEventListener("input", function () {
+        // Only allow numbers
+        this.value = this.value.replace(/\D/g, "");
+
+        const phoneNumber = this.value;
+        const selectedNetwork = selectedNetworkInput.value;
+
+        // Basic validation for Nigerian phone numbers
+        if (phoneNumber.length > 0) {
+          if (phoneNumber.length < 11) {
+            phoneNumberStatus.textContent = "Phone number must be 11 digits";
+            phoneNumberStatus.style.color = "var(--danger)";
+          } else if (phoneNumber.length === 11) {
+            // Validate network prefix
+            let isValid = false;
+            let detectedNetwork = "";
+
+            if (
+              phoneNumber.startsWith("070") ||
+              phoneNumber.startsWith("080") ||
+              phoneNumber.startsWith("090") ||
+              phoneNumber.startsWith("081")
+            ) {
+              // This is a simplified validation - in a real app, you'd have more comprehensive validation
+              isValid = true;
+
+              // Detect network based on prefix (simplified)
+              if (
+                phoneNumber.startsWith("0803") ||
+                phoneNumber.startsWith("0806") ||
+                phoneNumber.startsWith("0703") ||
+                phoneNumber.startsWith("0706") ||
+                phoneNumber.startsWith("0813") ||
+                phoneNumber.startsWith("0816") ||
+                phoneNumber.startsWith("0810") ||
+                phoneNumber.startsWith("0814")
+              ) {
+                detectedNetwork = "MTN";
+              } else if (
+                phoneNumber.startsWith("0802") ||
+                phoneNumber.startsWith("0808") ||
+                phoneNumber.startsWith("0708") ||
+                phoneNumber.startsWith("0812") ||
+                phoneNumber.startsWith("0701") ||
+                phoneNumber.startsWith("0902")
+              ) {
+                detectedNetwork = "AIRTEL";
+              } else if (
+                phoneNumber.startsWith("0805") ||
+                phoneNumber.startsWith("0807") ||
+                phoneNumber.startsWith("0705") ||
+                phoneNumber.startsWith("0815") ||
+                phoneNumber.startsWith("0811") ||
+                phoneNumber.startsWith("0905")
+              ) {
+                detectedNetwork = "GLO";
+              } else if (
+                phoneNumber.startsWith("0809") ||
+                phoneNumber.startsWith("0817") ||
+                phoneNumber.startsWith("0818") ||
+                phoneNumber.startsWith("0909") ||
+                phoneNumber.startsWith("0908")
+              ) {
+                detectedNetwork = "9MOBILE";
+              }
+            }
+
+            if (isValid) {
+              phoneNumberStatus.textContent = "Valid phone number";
+              phoneNumberStatus.style.color = "var(--success)";
+
+              // Auto-select network if detected and not already selected
+              if (detectedNetwork && !selectedNetworkInput.value) {
+                networkOptions.forEach((opt) => {
+                  if (opt.getAttribute("data-network") === detectedNetwork) {
+                    opt.click();
+                  }
+                });
+              }
+            } else {
+              phoneNumberStatus.textContent = "Invalid phone number format";
+              phoneNumberStatus.style.color = "var(--danger)";
+            }
+          }
+        } else {
+          phoneNumberStatus.textContent = "";
+        }
+      });
+
+      // Contact picker simulation
+      document
+        .getElementById("contactPicker")
+        .addEventListener("click", function () {
+          // In a real app, this would open the device's contact picker
+          // For this demo, we'll just simulate selecting a contact
+          const demoContacts = [
+            { name: "John Doe", phone: "08012345678" },
+            { name: "Jane Smith", phone: "07098765432" },
+            { name: "Sam Wilson", phone: "09087654321" },
+          ];
+
+          // Randomly select a contact
+          const selectedContact =
+            demoContacts[Math.floor(Math.random() * demoContacts.length)];
+          phoneNumberInput.value = selectedContact.phone;
+
+          // Trigger the input event to validate the phone number
+          const inputEvent = new Event("input", { bubbles: true });
+          phoneNumberInput.dispatchEvent(inputEvent);
+        });
+
+      // Display loading status
+      function showLoader() {
+        loader.style.display = "block";
+        buyAirtimeBtn.disabled = true;
+      }
+
+      function hideLoader() {
+        loader.style.display = "none";
+        buyAirtimeBtn.disabled = false;
+      }
+
+      // Show status message in bottom sheet
+      function showStatusMessage(success, message) {
+        if (success) {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/free/png-256/free-check-verified-successful-accept-tick-yes-success-2822.png?f=webp&w=256";
+        } else {
+          statusIcon.src =
+            "https://cdn.iconscout.com/icon/premium/png-256-thumb/warning-38-127136.png?f=webp&w=256";
+        }
+
+        confirmationMessage.innerHTML = message;
+        bottomSheet.style.bottom = "0";
+      }
+
+      // Buy airtime function
+      buyAirtimeBtn.addEventListener("click", async function () {
+        const network = selectedNetworkInput.value;
+        const phoneNumber = phoneNumberInput.value;
+        const amount = parseFloat(amountInput.value);
+
+        // Validate inputs
+        if (!network) {
+          showStatusMessage(false, "Please select a network provider.");
+          return;
+        }
+
+        if (!phoneNumber || phoneNumber.length !== 11) {
+          showStatusMessage(
+            false,
+            "Please enter a valid 11-digit phone number."
+          );
+          return;
+        }
+
+        if (!amount || amount < 50) {
+          showStatusMessage(
+            false,
+            "Please enter a valid amount (minimum ₦50)."
+          );
+          return;
+        }
+
+        showLoader();
+
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            hideLoader();
+            showStatusMessage(
+              false,
+              "User not logged in. Please log in to proceed."
+            );
+            setTimeout(() => {
+              window.location.href = "login.html";
+            }, 2000);
+            return;
+          }
+
+          // Fetch user balance from Firebase
+          const userRef = database.ref("users/" + user.uid);
+          const snapshot = await userRef.once("value");
+          const userData = snapshot.val();
+
+          if (!userData || userData.balance < amount) {
+            hideLoader();
+            showStatusMessage(
+              false,
+              `Insufficient balance to purchase ₦${amount.toLocaleString()} airtime. Please fund your account and try again.`
+            );
+            return;
+          }
+
+          // Generate transaction ID
+          const transactionId = "AIR" + Date.now().toString().substring(5);
+
+          // Transaction timestamp
+          const timestamp = firebase.database.ServerValue.TIMESTAMP;
+
+          // Create transaction object
+          const transaction = {
+            type: "airtime",
+            transactionId: transactionId,
+            user: {
+              userId: user.uid,
+              name: userData.fullName || "User",
+              phone: userData.phone || "",
+            },
+            details: {
+              network: network,
+              phoneNumber: phoneNumber,
+              amount: amount,
+            },
+            status: "success",
+            timestamp: timestamp,
+            formattedDate: new Date().toLocaleString(),
+          };
+
+          // Update user balance
+          const newBalance = userData.balance - amount;
+          await userRef.update({ balance: newBalance });
+
+          // Add to user's transaction history
+          await database
+            .ref(`users/${user.uid}/transactions/${transactionId}`)
+            .set(transaction);
+
+          // Add to global transactions collection
+          await database.ref(`transactions/${transactionId}`).set(transaction);
+
+          hideLoader();
+          showStatusMessage(
+            true,
+            `
+            <strong>Airtime Purchase Successful!</strong><br/>
+            You've purchased ₦${amount.toLocaleString()} ${network} airtime for ${phoneNumber}.<br/>
+            Your new balance is ₦${newBalance.toLocaleString()}.
+          `
+          );
+
+          // Reset form
+          document.getElementById("airtimeForm").reset();
+          networkOptions.forEach((opt) => opt.classList.remove("selected"));
+          selectedNetworkInput.value = "";
+          phoneNumberStatus.textContent = "";
+
+          // Redirect to transaction history page after 3 seconds
+          setTimeout(() => {
+            window.location.href = "history.html";
+          }, 3000);
+        } catch (error) {
+          hideLoader();
+          console.error("Airtime purchase error:", error);
+          showStatusMessage(
+            false,
+            "An error occurred while processing your airtime purchase. Please try again later."
+          );
+        }
+      });
+
+      // Close the bottom sheet
+      closeSheetBtn.addEventListener("click", () => {
         bottomSheet.style.bottom = "-100%";
+      });
+
+      // Check if user is logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "login.html";
+        }
       });
     </script>
   </body>
